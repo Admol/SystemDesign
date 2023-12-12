@@ -296,7 +296,7 @@ Android 采用了类似的通知流程。 Firebase Cloud Messaging (FCM) 通常�
 - 尊重用户设置：用户可以选择不接收通知。 我们的系统在发送通知之前首先检查用户设置。
 - 速率限制：用户会喜欢对他们收到的通知数量设置频率上限。
 
-祝贺你走到了这一步! 现在拍拍自己的屁股吧，干得漂亮!
+恭喜你走到了这一步！现在给自己一个鼓励，干得漂亮！
 
 ## 参考资料
   - [1] Twilio SMS:  [https://www.twilio.com/sms](https://www.twilio.com/sms)
