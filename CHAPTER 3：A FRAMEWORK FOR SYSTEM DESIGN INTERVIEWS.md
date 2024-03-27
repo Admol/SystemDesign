@@ -1,15 +1,5 @@
 # 第03章：系统设计面试框架
 
-* [有效系统设计面试的 4 步流程](<CHAPTER 3：A FRAMEWORK FOR SYSTEM DESIGN INTERVIEWS.md#有效系统设计面试的-4-步流程>)
-  * [第1步 ：了解问题并确定设计范围](<CHAPTER 3：A FRAMEWORK FOR SYSTEM DESIGN INTERVIEWS.md#第1步-了解问题并确定设计范围>)
-  * [第2步：提出高层次的设计方案并获得认同](<CHAPTER 3：A FRAMEWORK FOR SYSTEM DESIGN INTERVIEWS.md#第2步提出高层次的设计方案并获得认同>)
-  * [第3步：深入设计](<CHAPTER 3：A FRAMEWORK FOR SYSTEM DESIGN INTERVIEWS.md#第3步深入设计>)
-  * [第4步：总结](<CHAPTER 3：A FRAMEWORK FOR SYSTEM DESIGN INTERVIEWS.md#第4步总结>)
-
-## CHAPTER 03：A FRAMEWORK FOR SYSTEM DESIGN INTERVIEWS
-
-## 第三章：系统设计面试框架
-
 你刚刚获得了梦寐以求的现场面试机会。招聘协调员给你发送了当天的日程安排。看完整个日程安排后，你觉得一切都挺好，直到你看到了这个面试环节 - 系统设计面试。
 
 系统设计面试往往令人生畏，它可能像“设计一个知名的产品X？”那样的模糊不清。这些问题模棱两可，似乎过于宽泛。 你的担心是可以理解的。 毕竟，在一个小时内设计一个已经由数百甚至数千名工程师构建的流行产品，这似乎是不可能的？

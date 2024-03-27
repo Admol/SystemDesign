@@ -1,9 +1,5 @@
 # 第15章：设计 Google Drive
 
-## CHAPTER 15：DESIGN GOOGLE DRIVE
-
-## 第15章：设计 Google Drive
-
 近年来，Google Drive、Dropbox、Microsoft OneDrive、Apple iCloud 等云存储服务非常流行。在本章中，你需要设计 Google Drive。
 
 在开始设计之前，让我们花点时间了解一下 Google Drive。 Google Drive 是一种文件存储和同步服务，可帮助您在云端存储文档、照片、视频和其他文件。您可以从任何计算机、智能手机和平板电脑访问您的文件。你可以轻松地与朋友、家人和同事共享这些文件 \[1]。图 15-1 和 15-2 分别显示了 Google Drive 在浏览器和移动应用程序中的样子。

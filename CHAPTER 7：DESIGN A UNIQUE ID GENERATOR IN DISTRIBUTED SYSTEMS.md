@@ -1,8 +1,6 @@
 # 第07章：在分布式系统中设计唯一 ID 生成器
 
-## CHAPTER 07：DESIGN A UNIQUE ID GENERATOR IN DISTRIBUTED SYSTEMS
 
-## 第07章：在分布式系统中设计唯一 ID 生成器
 
 在本章中，要求在分布式系统中设计一个唯一 ID 生成器。 你的第一个想法可能是在传统数据库中使用具有 auto\_increment 属性的主键。 但是，auto\_increment 在分布式环境中不起作用，因为 单个数据库服务器不够大，跨多个数据库以最小延迟生成唯一 ID 具有挑战性。 以下是唯一 ID 的一些示例：
 

@@ -1,8 +1,5 @@
 # 第14章：设计 YouTube
 
-## CHAPTER 14：DESIGN YOUTUBE
-
-## 第14章：设计 YouTube
 
 在本章中，你被要求设计YouTube。这个问题的解决方案可以应用于其他面试问题，如设计一个视频共享平台，如Netflix和Hulu。图14-1显示了YouTube的主页。
 
