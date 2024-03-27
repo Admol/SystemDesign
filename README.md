@@ -19,7 +19,7 @@
 * [第 7 章：设计一个分布式系统唯一ID生成器](<CHAPTER 7：DESIGN A UNIQUE ID GENERATOR IN DISTRIBUTED SYSTEMS.md>)
 * [第 8 章：设计一个短网址系统](<CHAPTER 8：DESIGN A URL SHORTENER.md>)
 * [第 9 章：设计一个网络爬虫系统](<CHAPTER 9：DESIGN A WEB CRAWLER.md>)
-* [第 10章：设计一个通知系统](<README (1).md>)
+* [第 10章：设计一个通知系统](<CHAPTER 10：DESIGN A NOTIFICATION SYSTEM.md>)
 * [第 11章：设计一个新闻提要系统](<CHAPTER 11：DESIGN A NEWS FEED SYSTEM.md>)
 * [第 12章：设计一个聊天系统](<CHAPTER 12：DESIGN A CHAT SYSTEM.md>)
 * [第 13章：设计一个搜索自动完成系统](<CHAPTER 13：DESIGN A SEARCH AUTOCOMPLETE SYSTEM.md>)
