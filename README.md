@@ -8,6 +8,8 @@
 
 译者：精灵王 [@Admol](https://github.com/Admol)
 
+
+
 ### 目录
 
 * [第 1 章：从零到数百万用户的规模](<CHAPTER 1：SCALE FROM ZERO TO MILLIONS OF USERS.md>)
@@ -27,6 +29,10 @@
 * [第 15章：设计 Google Drive](<CHAPTER 15：DESIGN GOOGLE DRIVE.md>)
 
 ***
+
+### 在线阅读
+[系统设计面试：内幕指南（中文翻译）](https://learning-guide.gitbook.io/system-design-interview)
+
 
 ## 声明
 
