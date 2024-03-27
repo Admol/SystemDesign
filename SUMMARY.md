@@ -10,7 +10,7 @@
 * [第07章：分布式系统中设计唯一 ID 生成器](<CHAPTER 7：DESIGN A UNIQUE ID GENERATOR IN DISTRIBUTED SYSTEMS.md>)
 * [第08章：短网址设计](<CHAPTER 8：DESIGN A URL SHORTENER.md>)
 * [第09章：网络爬虫设计](<CHAPTER 9：DESIGN A WEB CRAWLER.md>)
-* [第10章：设计一个通知系统](di-10-zhang-she-ji-yi-ge-tong-zhi-xi-tong.md)
+* [第10章：设计一个通知系统](<CHAPTER 10：DESIGN A NOTIFICATION SYSTEM.md>)
 * [第11章：设计一个新闻提要系统](<CHAPTER 11：DESIGN A NEWS FEED SYSTEM.md>)
 * [第12章：设计一个聊天系统](<CHAPTER 12：DESIGN A CHAT SYSTEM.md>)
 * [第13章：设计一个搜索自动完成系统](<CHAPTER 13：DESIGN A SEARCH AUTOCOMPLETE SYSTEM.md>)
