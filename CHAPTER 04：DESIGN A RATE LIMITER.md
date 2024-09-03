@@ -333,11 +333,11 @@ descriptors:
 
 如前所述，限流器在高层的工作原理如下
 
-```
+
 - 从Redis读取计数器的值
 - 检查 ( 计数器 + 1 ) 是否超过阈值
 - 如果不是，则将 Redis 中的计数器值加 1
-```
+
 
 如图4-14所示，在高度并发的环境中会发生竞争条件。
 
@@ -345,7 +345,7 @@ descriptors:
 
 假设 Redis 中的计数器值为 3。如果两个请求在其中一个请求写回值之前同时读取计数器值，则每个请求都会将计数器加 1 并在不检查另一个线程的情况下将其写回。 两个请求（线程）都认为它们具有正确的计数器值 4。但是，正确的计数器值应该是 5
 
-锁是解决竞争条件最明显的解决方案。 但是，锁会显着降低系统速度。 通常使用两种策略来解决这个问题： Lua 脚本 \[13] 和 Redis \[8] 中的 sorted sets 数据结构。 对这些策略感兴趣的读者可以参考相应的参考资料\[8] \[13]。
+锁是解决竞争条件最明显的解决方案。 但是，锁会显着降低系统速度。 通常使用两种策略来解决这个问题： Lua 脚本 [[13](#ref13)] 和 Redis [[8](#ref8)] 中的 sorted sets 数据结构。 对这些策略感兴趣的读者可以参考相应的参考资料[[8](#ref8)] [[13](#ref13)]。
 
 **同步问题**
 
@@ -422,6 +422,7 @@ https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-request
 
 \[7] Shopify REST Admin API rate limits: https://help.shopify.com/en/api/reference/rest-admin-api-rate-limits
 
+<a id="ref8"></a>
 \[8] Better Rate Limiting With Redis Sorted Sets:https://engineering.classdojo.com/blog/2015/02/06/rolling-rate-limiter/
 
 \[9] System Design — Rate limiter and Data modelling:https://medium.com/@saisandeepmopuri/system-design-rate-limiter-and-data-modelling-9304b0d18250
@@ -432,6 +433,7 @@ https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-request
 
 \[12] Lyft rate limiting: https://github.com/lyft/ratelimit
 
+<a id="ref13"></a>
 \[13] Scaling your API with rate limiters:https://gist.github.com/ptarjan/e38f45f2dfe601419ca3af937fff574d#request-rate-limiter
 
 \[14] What is edge computing: https://www.cloudflare.com/learning/serverless/glossary/what-is-edge-computing/
