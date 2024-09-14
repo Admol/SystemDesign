@@ -71,9 +71,9 @@
 
 对于大多数客户端/服务器应用程序，请求由客户端发起。 对于聊天应用程序的发送方也是如此。
 
-在图 12-2 中，当发送方通过聊天服务向接收方发送消息时，它使用久经考验的 HTTP 协议，这是最常见的 Web 协议。 在此场景中，客户端打开与聊天服务的 HTTP 连接并发送消息，通知服务将消息发送给接收者。 keep-alive 对此很有效，因为 keep-alive 标头允许客户端与聊天服务保持持久连接。 它还减少了 TCP 握手的次数。 HTTP 在发送端是一个不错的选择，许多流行的聊天应用程序（例如 Facebook \[1]）最初使用 HTTP 来发送消息。
+在图 12-2 中，当发送方通过聊天服务向接收方发送消息时，它使用久经考验的 HTTP 协议，这是最常见的 Web 协议。 在此场景中，客户端打开与聊天服务的 HTTP 连接并发送消息，通知服务将消息发送给接收者。 `Keep-Alive` 对此很有效，因为 `Keep-Alive` 标头允许客户端与聊天服务保持持久连接。 它还减少了 TCP 握手的次数。 HTTP 在发送端是一个不错的选择，许多流行的聊天应用程序（例如 Facebook \[1]）最初使用 HTTP 来发送消息。
 
-然而，接收方的情况就比较复杂了。由于HTTP是由客户发起的，因此从服务器发送消息并非易事。多年来，许多技术被用来模拟服务器发起的连接：轮询（Polling）、长轮询（, long polling）和 WebSocket。这些都是在系统设计面试中广泛使用的重要技术，所以让我们逐一研究。
+然而，接收方的情况就比较复杂了。由于HTTP是由客户发起的，因此从服务器发送消息并非易事。多年来，许多技术被用来模拟服务器发起的连接：轮询（Polling）、长轮询（Long polling）和 WebSocket。这些都是在系统设计面试中广泛使用的重要技术，所以让我们逐一研究。
 
 #### 轮询
 
@@ -147,13 +147,13 @@ WebSocket连接是由客户端发起的。它是双向且持久的。它以HTTP�
 
 ![](images/chapter12/figure12-8.jpg)
 
-在图12-8中，客户端与聊天服务器保持一个持久的WebSocket连接，用于实时消息传递。
+在图12-8中，客户端与聊天服务器保持一个持久的 WebSocket 连接，用于实时消息传递。
 
-* 聊天服务器促进了信息的发送/接收。
-* 在线服务器管理在线/离线状态。
-* API服务器处理一切，包括用户登录、注册、更改资料等。
-* 通知服务器发送推送通知。
-* 最后，键值存储用于存储聊天历史。当一个离线用户上线时，她会看到她以前所有的聊天历史。
+* 聊天服务器 (Chat servers) 促进了信息的发送/接收。
+* 在线服务器 (Presence servers) 管理在线/离线状态。
+* API服务器 (API servers) 处理一切，包括用户登录、注册、更改资料等。
+* 通知服务器 (Notification servers) 发送推送通知。
+* 最后，键值存储 (KV store) 用于存储聊天历史。当一个离线用户上线时，她会看到她以前所有的聊天历史。
 
 #### 储存
 
@@ -183,24 +183,24 @@ WebSocket连接是由客户端发起的。它是双向且持久的。它以HTTP�
 
 *   一对一聊天的消息表
 
-    图12-9显示了1对1聊天的消息表。主键是message\_id，它有助于决定消息的顺序。我们不能依靠created\_at来决定消息的顺序，因为两条消息可以同时创建。
+    图12-9显示了1对1聊天的消息表。主键是 `message_id` ，它有助于决定消息的顺序。我们不能依靠 `created_at` 来决定消息的顺序，因为两条消息可以同时创建。
 
     ![](images/chapter12/figure12-9.jpg)
 *   群聊消息表
 
-    图12-10显示了群聊的消息表。复合主键是（channel\_id，message\_id）。频道和组在此表示相同的含义。channel\_id是分区键，因为群聊天中的所有查询都在一个通道中运行。
+    图12-10显示了群聊的消息表。复合主键是 `(channel_id，message_id)`。频道和组在此表示相同的含义。`channel_id` 是分区键，因为群聊天中的所有查询都在一个通道中运行。
 
     ![](images/chapter12/figure12-10.jpg)
 *   消息ID
 
-    如何生成message\_id是一个值得探索的有趣话题。Message\_id承担着确保消息顺序的责任。为了确定消息的顺序，message\_id必须满足以下两个要求。
+    如何生成 `message_id` 是一个值得探索的有趣话题。`message_id` 承担着确保消息顺序的责任。为了确定消息的顺序，`message_id` 必须满足以下两个要求。
 
     * ID 必须唯一。
     * ID应该可以按时间排序，也就是说，新行的ID要比旧行高。
 
-    我们如何才能实现这两项保证呢？我想到的第一个想法是MySql中的 "auto\_increment "关键字。然而，NoSQL数据库通常不提供这样的功能。
+    我们如何才能实现这两项保证呢？我想到的第一个想法是 MySQL 中的 `auto_increment` 关键字。然而，NoSQL数据库通常不提供这样的功能。
 
-    第二种方法是使用像Snowflake\[6]那样的全局64位序列号发生器。这将在 "第七章：在分布式系统中设计一个唯一的ID生成器 "中讨论。
+    第二种方法是使用像Snowflake\[6]那样的全局64位序列号发生器。这将在 "第七章：在分布式系统中设计一个唯一的ID生成器" 中讨论。
 
     最后一种方法是使用本地序列号生成器。本地意味着ID只在一个组内是唯一的。本地ID发挥作用的原因是，在一对一的信道或一个组的信道内维持消息序列就足够了。与全局ID的实现相比，这种方法更容易实现。
 
@@ -247,12 +247,12 @@ WebSocket连接是由客户端发起的。它是双向且持久的。它以HTTP�
 
 在图12-13中，用户A有两台设备：一台手机和一台笔记本电脑。当用户A用手机登录聊天应用程序时，它与聊天服务器1建立了一个WebSocket连接。同样地，笔记本电脑和聊天服务器1之间也有一个连接。
 
-每个设备都维护着一个叫做cur\_max\_message\_id的变量，它记录着设备上最新的消息ID。满足以下两个条件的消息被认为是新消息。
+每个设备都维护着一个叫做 `cur_max_message_id`的变量，它记录着设备上最新的消息ID。满足以下两个条件的消息被认为是新消息。
 
 * 收件人ID等于当前登录的用户ID。
-* 键值存储中的消息ID大于cur\_max\_message\_id
+* 键值存储中的消息ID大于 `cur_max_message_id`
 
-由于每个设备上都有不同的cur\_max\_message\_id，信息同步很容易，因为每个设备都可以从KV商店获得新的信息。
+由于每个设备上都有不同的 `cur_max_message_id`，信息同步很容易，因为每个设备都可以从键值存储获得新的信息。
 
 **群组聊天流程**
 
@@ -321,17 +321,17 @@ WebSocket连接是由客户端发起的。它是双向且持久的。它以HTTP�
   * 聊天服务器错误。可能有数十万，甚至更多的，坚持不懈的连接到一个聊天服务器。如果一个聊天服务器离线，服务发现（Zookeeper）会提供一个新的聊天服务器，让客户建立新的连接。
   * 消息重发机制。重试和排队是重发消息的常用技术。
 
-恭喜你走到了这一步！现在给自己一个鼓励，干得漂亮！
+恭喜你走到了这一步！现在给自己一个鼓励，干得漂亮！[Goo][1]
 
 ### 参考资料
 
-* \[1] Erlang at Facebook: https://www.erlang- [factory.com/upload/presentations/31/EugeneLetuchy-ErlangatFacebook.pdf](http://factory.com/upload/presentations/31/EugeneLetuchy-ErlangatFacebook.pdf)
-* \[2] Messenger and WhatsApp process 60 billion messages a day: [https://www.theverge.com/2016/4/12/11415198/facebook-messenger-whatsapp-number-messages-vs-sms-f8-2016](https://www.theverge.com/2016/4/12/11415198/facebook-messenger-whatsapp-number-)
+* \[1] Erlang at Facebook: <https://www.erlang-factory.com/upload/presentations/31/EugeneLetuchy-ErlangatFacebook.pdf>
+* \[2] Messenger and WhatsApp process 60 billion messages a day: <https://www.theverge.com/2016/4/12/11415198/facebook-messenger-whatsapp-number-messages-vs-sms-f8-2016>
 * \[3] Long tail: [https://en.wikipedia.org/wiki/Long\_tail](https://en.wikipedia.org/wiki/Long\_tail)
-* \[4] The Underlying Technology of Messages: [https://www.facebook.com/notes/facebook-engineering/the-underlying-technology-of-messages/454991608919/](https://www.facebook.com/notes/facebook-)
-* \[5] How Discord Stores Billions of Messages: [https://blog.discordapp.com/how-discord-stores-billions-of-messages-7fa6ec7ee4c7](https://blog.discordapp.com/how-discord-)
-* \[6] Announcing Snowflake: [https://blog.twitter.com/engineering/en\_us/a/2010/announcing-snowflake.html](https://blog.twitter.com/engineering/en\_us/a/2010/announcing-)
+* \[4] The Underlying Technology of Messages: <https://www.facebook.com/notes/facebook-engineering/the-underlying-technology-of-messages/454991608919/>
+* \[5] How Discord Stores Billions of Messages: <https://blog.discordapp.com/how-discord-stores-billions-of-messages-7fa6ec7ee4c7>
+* \[6] Announcing Snowflake: <https://blog.twitter.com/engineering/en_us/a/2010/announcing-snowflake.html>
 * \[7] Apache ZooKeeper: [https://zookeeper.apache.org/](https://zookeeper.apache.org/)
 * \[8] From nothing: the evolution of WeChat background system (Article in Chinese): [https://www.infoq.cn/article/the-road-of-the-growth-weixin-background](https://www.infoq.cn/article/the-road-of-the-growth-weixin-background)
-* \[9] End-to-end encryption: [https://faq.whatsapp.com/en/android/28030015/](https://faq.whatsapp.com/en/android/28030015/)
-* \[10] Flannel: An Application-Level Edge Cache to Make Slack Scale: [https://slack.engineering/flannel-an-application-level-edge-cache-to-make-slack-scale-b8a6400e2f6b](https://slack.engineering/flannel-an-application-level-edge-cache-to-make-slack-scale-)
+* \[9] End-to-end encryption: <https://faq.whatsapp.com/820124435853543/>
+* \[10] Flannel: An Application-Level Edge Cache to Make Slack Scale: <https://slack.engineering/flannel-an-application-level-edge-cache-to-make-slack-scale-b8a6400e2f6b>

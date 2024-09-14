@@ -55,7 +55,7 @@
    1. 设备 token：这是用于发送推送通知的唯一标识符。
    2.  有效载荷：是一个包含通知有效载荷的 JSON 字典。 例子：
 
-       ```java
+       ```json
        {
            "aps": {
                "alert": {
@@ -141,7 +141,7 @@ Android 采用了类似的通知流程。 Firebase Cloud Messaging (FCM) 通常�
 浏览上图的最佳方式是从左到右。
 
 * **服务1到N**：它们代表不同的服务，通过通知服务器提供的API发送通知。
-* **通知服务器:** 它们提供以下功能：
+* **通知服务器**: 它们提供以下功能：
   * 为服务提供发送通知的API。这些API只能由内部或经过验证的客户访问，以防止垃圾邮件。
   * 进行基本验证，以核实电子邮件、电话号码等。
   * 查询数据库或缓存以获取渲染通知所需的数据。
@@ -159,7 +159,7 @@ Android 采用了类似的通知流程。 Firebase Cloud Messaging (FCM) 通常�
 * **消息队列**：它们消除了组件之间的依赖性。当大量的通知被发送出去时，消息队列可以作为缓冲区。每种通知类型都被分配了一个不同的消息队列，所以一个第三方服务的中断不会影响其他通知类型。
 * **Workers**：Workers 是一组服务器，它们从消息队列中拉取通知事件并将它们发送到相应的第三方服务。
 * **第三方服务**：在最初的设计中已经解释过。
-* \*\*iOS, Android, SMS, Email：\*\*在最初的设计中已经说明。
+* **iOS, Android, SMS, Email**：在最初的设计中已经说明。
 
 接下来，让我们来看看每个组件是如何一起工作来发送通知的。
 
@@ -202,7 +202,7 @@ Android 采用了类似的通知流程。 Firebase Cloud Messaging (FCM) 通常�
 
     一个大型的通知系统每天会发出数百万条通知，其中许多通知都遵循类似的格式。通知模板的引入是为了避免从头开始建立每一个通知。通知模板是一个预先格式化的通知，通过自定义参数、样式、跟踪链接等来创建你独特的通知。下面是一个推送通知的例子模板。
 
-    ```java
+    ```
     BODY:
     You dreamed of it. We dared it. [ITEM NAME] is back — only until [DATE].
     CTA:
@@ -214,7 +214,7 @@ Android 采用了类似的通知流程。 Firebase Cloud Messaging (FCM) 通常�
 
     用户一般每天都会收到太多的通知，他们很容易感到不堪重负。因此，许多网站和应用程序让用户对通知设置进行细化控制。这些信息存储在通知设置表中，有以下字段：
 
-    ```java
+    ```
     user_id   bigInt
     channel  varchar    # push notification, email or SMS
     opt_in   boolean    # opt-in to receive notification

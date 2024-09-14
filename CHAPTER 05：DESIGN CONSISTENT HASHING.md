@@ -7,19 +7,19 @@
 
 如果你有n个缓存服务器，平衡负载的一个常用方法是使用以下哈希方法：
 
-`serverIndex = hash(key) % N`，其中N是服务器池的大小
+$$serverIndex = hash(key) \bmod N$$，其中N是服务器池的大小
 
 让我们用一个例子来说明它是如何工作的。如表5-1所示，我们有4个服务器和8个字符串键及其哈希值。
 
 ![](images/chapter5/table5-1.jpg)
 
-为了获取存储键的服务器，我们进行求余操作 `f(key) % 4`。例如，hash(key0) % 4 = 1意味着客户端必须联系服务器1来获取缓存的数据。图5-1显示了基于表5-1的键的分布情况
+为了获取存储键的服务器，我们进行求余操作 $$f(key) \bmod 4$$。例如， $$hash(key0) \bmod 4 = 1$$ 意味着客户端必须联系服务器1来获取缓存的数据。图5-1显示了基于表5-1的键的分布情况
 
 ![](images/chapter5/figure5-1.jpg)
 
 当服务器池的大小是固定的，而且数据分布均匀时，这种方法效果很好。然而，当增加新的服务器，或删除现有的服务器时，问题就会出现。
 
-例如，如果服务器1下线了，服务器池的大小就变成了3。使用相同的哈希函数，我们得到的键的哈希值是相同的。 但是应用求余操作，我们会得到不同的服务器索引，因为服务器的数量减少了1。 通过应用`hash % 3`，我们得到的结果如表5-2所示：
+例如，如果服务器1下线了，服务器池的大小就变成了 3。使用相同的哈希函数，我们得到的键的哈希值是相同的。 但是应用求余操作，我们会得到不同的服务器索引，因为服务器的数量减少了 1。 通过应用 $$hash \bmod 3$$，我们得到的结果如表5-2所示：
 
 ![](images/chapter5/table5-2.jpg)
 
@@ -31,11 +31,11 @@
 
 #### 一致性哈希
 
-引用自维基百科：“一致性哈希是一种特殊的哈希，当重新调整哈希表的大小并使用一致性哈希时，平均只需要重新映射 k/n 个键，其中 k 是键的数量，n 是槽的数量。 相比之下，在大多数传统的哈希表中，数组槽数量的变化导致几乎所有键都被重新映射 \[1]”
+引用自维基百科：“一致性哈希是一种特殊的哈希，当重新调整哈希表的大小并使用一致性哈希时，平均只需要重新映射 $$k/n$$ 个键，其中 $$k$$ 是键的数量， $$n$$ 是槽的数量。 相比之下，在大多数传统的哈希表中，数组槽数量的变化导致几乎所有键都被重新映射 \[1]”
 
 #### 哈希空间和哈希环
 
-现在我们了解了一致性哈希的定义，让我们看看它是如何工作的。假设使用`SHA-1`作为哈希函数`f`，哈希函数的输出范围为：x0,x1,x2,x3,...,xn。 在密码学中，SHA-1 的哈希空间从 0 到 2^160 - 1。也就是说，x0 对应 0，xn 对应 2^160 – 1，中间的所有其他哈希值都在 0 和 2^160 – 1 之间。 图 5-3 显示了哈希空间。
+现在我们了解了一致性哈希的定义，让我们看看它是如何工作的。假设使用`SHA-1`作为哈希函数`f`，哈希函数的输出范围为： $$x_0,x_1,x_2,x_3,...,x_n$$。 在密码学中，`SHA-1` 的哈希空间从 $$0$$ 到 $$2^{160} – 1$$。也就是说， $$x_0$$ 对应 $$0$$， $$x_n$$ 对应 $$2^{160} – 1$$，中间的所有其他哈希值都在 $$0$$ 和 $$2^{160} – 1$$ 之间。 图 5-3 显示了哈希空间。
 
 ![](images/chapter5/figure5-3.jpg)
 
@@ -137,28 +137,28 @@
 
 #### 参考资料
 
-\[1] Consistent hashing: https://en.wikipedia.org/wiki/Consistent\_hashing
+\[1] Consistent hashing: <https://en.wikipedia.org/wiki/Consistent_hashing>
 
 \[2] Consistent Hashing:
 
-https://tom-e-white.com/2007/11/consistent-hashing.html
+<https://tom-e-white.com/2007/11/consistent-hashing.html>
 
 \[3] Dynamo: Amazon’s Highly Available Key-value Store:
 
-https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf
+<https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf>
 
 \[4] Cassandra - A Decentralized Structured Storage System:
 
-http://www.cs.cornell.edu/Projects/ladis2009/papers/Lakshman-ladis2009.PDF
+<http://www.cs.cornell.edu/Projects/ladis2009/papers/Lakshman-ladis2009.PDF>
 
 \[5] How Discord Scaled Elixir to 5,000,000 Concurrent Users:
 
-https://blog.discord.com/scaling-elixir-f9b8e1e7c29b
+<https://blog.discord.com/scaling-elixir-f9b8e1e7c29b>
 
-\[6] CS168: The Modern Algorithmic Toolbox Lecture #1: Introduction and Consistent
+\[6] CS168: The Modern Algorithmic Toolbox Lecture #1: Introduction and Consistent Hashing:
 
-Hashing: http://theory.stanford.edu/\~tim/s16/l/l1.pdf
+<http://theory.stanford.edu/~tim/s16/l/l1.pdf>
 
 \[7] Maglev: A Fast and Reliable Software Network Load Balancer:
 
-https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/44824.pdf
+<https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/44824.pdf>
