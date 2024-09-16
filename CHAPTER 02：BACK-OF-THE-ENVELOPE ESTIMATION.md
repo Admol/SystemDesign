@@ -22,11 +22,11 @@ Google的Dean博士在2010年透露了典型计算机操作的时间\[1]。 随�
 
 ns = 纳秒, μs = 微秒, ms = 毫秒
 
-1 ns = 10^-9 秒
+$$1 \space ns = 10^{-9} \space 秒$$
 
-1 μs= 10^-6 秒 = 1,000 ns
+$$1 \space \mu s= 10^{-6} \space 秒 = 1,000 \space ns$$
 
-1 ms = 10^-3 秒 = 1,000 μs = 1,000,000 ns
+$$1 \space ms = 10^{-3} \space 秒 = 1,000 \space \mu s = 1,000,000 \space ns$$
 
 一位谷歌软件工程师构建了一个工具来可视化Dean博士的数据。该工具还考虑了时间因素。 图2-1显示了截至2020年的可视化延迟数字（图源：参考资料\[3]）。
 
@@ -88,4 +88,14 @@ ns = 纳秒, μs = 微秒, ms = 毫秒
 
 #### 参考资料
 
-\[1] J. Dean. Google专业提示：使用粗略估计来选择最佳设计： http://highscalability.com/blog/2011/1/26/google-pro-tip-use-back-of-the-envelope-calculations-to-choo.html \[2] 系统设计入门指南：https://github.com/donnemartin/system-design-primer \[3] 每个程序员都应该知道的延迟数据：https://colin-scott.github.io/personal\_website/research/interactive\_latency.html \[4] 亚马逊计算服务等级协议：https://aws.amazon.com/compute/sla/ \[5] 计算引擎服务等级协议（SLA）：https://cloud.google.com/compute/sla \[6] Azure服务的SLA摘要：https://azure.microsoft.com/en-us/support/legal/sla/summary/
+\[1] J. Dean. Google专业提示：使用粗略估计来选择最佳设计： <http://highscalability.com/blog/2011/1/26/google-pro-tip-use-back-of-the-envelope-calculations-to-choo.html>
+
+\[2] 系统设计入门指南：<https://github.com/donnemartin/system-design-primer>
+
+\[3] 每个程序员都应该知道的延迟数据：<https://colin-scott.github.io/personal_website/research/interactive_latency.html>
+
+\[4] 亚马逊计算服务等级协议：<https://aws.amazon.com/compute/sla/>
+
+\[5] 计算引擎服务等级协议（SLA）：<https://cloud.google.com/compute/sla>
+
+\[6] Azure服务的SLA摘要：<https://azure.microsoft.com/en-us/support/legal/sla/summary/>

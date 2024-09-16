@@ -76,11 +76,11 @@ YouTube 看起来很简单：内容创作者上传视频，观众点击播放。
 * 用户每天观看5个视频。
 * 10%的用户每天上传1个视频。
 * 假设平均视频大小为300MB。
-* 每天需要的总存储空间。500万\*10%\*300MB=150TB
+* 每天需要的总存储空间。 $$500万 \times 10 \% \times 300MB = 150TB$$
 * CDN成本
   * 当云计算CDN提供视频时，你要为从CDN传输出来的数据付费。
   * 让我们使用亚马逊的CDN CloudFront进行成本估算（图14-2）\[3]。假设100%的流量都来自美国。每GB的平均成本为0.02美元。为简单起见，我们只计算视频流的成本。
-  * 500万 \* 5个视频 \* 0.3GB \* 0.02美元 = 15万美元/天
+  * $$500万 \times 5个视频 \times 0.3GB \times 0.02美元 = 15万美元/天$$
 
 从粗略的成本估算中，我们知道从CDN提供视频的成本很高。即使云供应商愿意为大客户大幅降低CDN成本，但成本仍然很高。我们将深入讨论降低CDN成本的方法。
 
@@ -405,7 +405,7 @@ CDN是我们系统的一个重要组成部分。它确保了在全球范围内�
 * \[8] SVE: Distributed Video Processing at Facebook Scale:[https://www.cs.princeton.edu/\~wlloyd/papers/sve-sosp17.pdf](https://www.cs.princeton.edu/\~wlloyd/papers/sve-sosp17.pdf)
 * \[9] Weibo video processing architecture (in Chinese):
 * [https://www.upyun.com/opentalk/399.html](https://www.upyun.com/opentalk/399.html)
-* \[10] Delegate access with a shared access signature:[https://docs.microsoft.com/en-us/rest/api/storageservices/delegate-access-with-shared-access-](https://docs.microsoft.com/en-us/rest/api/storageservices/delegate-access-with-shared-access-signature)
+* \[10] Delegate access with a shared access signature:[https://docs.microsoft.com/en-us/rest/api/storageservices/delegate-access-with-shared-access-signature](https://docs.microsoft.com/en-us/rest/api/storageservices/delegate-access-with-shared-access-signature)
 * \[11] YouTube scalability talk by early YouTube employee: [https://www.youtube.com/watch](https://www.youtube.com/watch?v=w5WVu624fY8)
 * \[12] Understanding the characteristics of internet short video sharing: A youtube-based measurement study. [https://arxiv.org/pdf/0707.3670.pdf](https://arxiv.org/pdf/0707.3670.pdf)
 * \[13] Content Popularity for Open Connect: [https://netflixtechblog.com/content-popularity-for-open-connect-b86d56f613b](https://netflixtechblog.com/content-popularity-for-open-connect-b86d56f613b)

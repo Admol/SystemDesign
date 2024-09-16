@@ -54,17 +54,17 @@
 * 每个查询字符串有20字节的数据。
   * 假设我们使用ASCII字符编码。1个字符=1个字节
   * 假设一个查询包含4个词，而每个词平均包含5个字符。
-  * 也就是说，每次查询有4 x 5 = 20个字节。
-* 对于在搜索框中输入的每个字符，客户端都会向后端发送请求以获取自动完成建议。 平均而言，每个搜索查询会发送 20 个请求。 例如，当您输入完“dinner”时，以下 6 个请求将发送到后端。
-  1. search?q=d
-  2. search?q=di
-  3. search?q=din
-  4. search?q=dinn
-  5. search?q=dinne
-  6. search?q=dinner
-* \~24,000次/秒（QPS）=10,000,000用户 \* \*10次/天 \*\* 20个字符/24小时/3600秒。
-* 峰值QPS = QPS \* 2 = \~48,000
-* 假设 20% 的日常查询是新的。 1000 万 \* 10 个查询/天 \* 每个查询 20 字节 \* 20% = 0.4 GB。 这意味着每天有 0.4GB 的新数据被添加到存储中。
+  * 也就是说，每次查询有 $$4 \times 5 = 20个字节$$。
+* 对于在搜索框中输入的每个字符，客户端都会向后端发送请求以获取自动完成建议。 平均而言，每个搜索查询会发送 20 个请求。 例如，当您输入完 "dinner" 时，以下 6 个请求将发送到后端。
+  1. `search?q=d`
+  2. `search?q=di`
+  3. `search?q=din`
+  4. `search?q=dinn`
+  5. `search?q=dinne`
+  6. `search?q=dinner`
+* $$QPS \approx 24,000次/秒 = 10,000,000用户 \times 10次/天 \times 20个字符/24小时/3600秒 $$。
+* $$峰值QPS = QPS \times 2 \approx 48,000$$
+* 假设 20% 的日常查询是新的。 $$1000 万 \times 10 个查询/天 \times 每个查询 20 字节 \times 20 \% = 0.4 GB$$。 这意味着每天有 0.4GB 的新数据被添加到存储中。
 
 ### 第2步：提出高层次的设计方案并获得认同
 
@@ -89,7 +89,7 @@ Frequency：它代表一个查询被搜索的次数。
 
 ![](images/chapter13/table13-1.jpg)
 
-当用户在搜索框中输入 "tw "时，假设频率表以表13-1为基础，就会显示以下前5个被搜索的查询（图13-3）。
+当用户在搜索框中输入 "tw" 时，假设频率表以表13-1为基础，就会显示以下前5个被搜索的查询（图13-3）。
 
 ![](images/chapter13/figure13-3.jpg)
 
@@ -146,9 +146,9 @@ trie 的主要思想包括以下内容：
 
 下面列出了获得前 k 个搜索最多的查询的步骤：
 
-1. 找到前缀。时间复杂度：O(p)。
-2. 从前缀节点遍历子树，得到所有有效的子节点。如果一个子节点能够形成一个有效的查询字符串，它就是有效的。时间复杂度：O(c)
-3. 对孩子节点进行排序并获得前 k。 时间复杂度：O(clogc)
+1. 找到前缀。时间复杂度： $$O(p)$$。
+2. 从前缀节点遍历子树，得到所有有效的子节点。如果一个子节点能够形成一个有效的查询字符串，它就是有效的。时间复杂度： $$O(c)$$
+3. 对孩子节点进行排序并获得前 k。 时间复杂度： $$O(c \log c)$$
 
 让我们用一个如图13-7所示的例子来解释这个算法。假设k等于2，一个用户在搜索框中输入 "tr"。该算法的工作原理如下。
 
@@ -158,7 +158,7 @@ trie 的主要思想包括以下内容：
 
 ![](images/chapter13/figure13-7.jpg)
 
-这个算法的时间复杂度是上述每个步骤所花费的时间之和。O(p) + O(c) + O(clogc)
+这个算法的时间复杂度是上述每个步骤所花费的时间之和。 $$O(p) + O(c) + O(c \log c)$$
 
 上述算法很简单，但是，它太慢了，因为在最坏的情况下，我们需要遍历整个 trie 来获得前 k 个结果。
 
@@ -169,7 +169,7 @@ trie 的主要思想包括以下内容：
 
 **限制前缀的最大长度**
 
-用户很少在搜索框中键入长搜索查询。 因此，可以安全地说 p 是一个小整数，比如 50。如果我们限制前缀的长度，“查找前缀”的时间复杂度可以从 O(p) 降低到 O(small constant)， 又名 O(1)。
+用户很少在搜索框中键入长搜索查询。 因此，可以安全地说 p 是一个小整数，比如 50。如果我们限制前缀的长度，“查找前缀”的时间复杂度可以从 $$O(p)$$ 降低到 $$O(small constant)$$， 又名 $$O(1)$$。
 
 **缓存每个节点的热门搜索查询**
 
@@ -179,14 +179,14 @@ trie 的主要思想包括以下内容：
 
 以空间换时间是非常值得的，因为快速响应时间非常重要。
 
-图13-8显示了更新后的 trie 数据结构。每个节点上都存储了前5个查询。例如，前缀为 "be "的节点存储以下内容。\[best: 35, bet: 29, bee: 20, be: 15, beer: 10]。
+图13-8显示了更新后的 trie 数据结构。每个节点上都存储了前5个查询。例如，前缀为 "be" 的节点存储以下内容。\[best: 35, bet: 29, bee: 20, be: 15, beer: 10]。
 
 ![](images/chapter13/figure13-8.jpg)
 
 让我们重新审视一下应用这两个优化后的算法的时间复杂性。
 
-1. 找到前缀节点。时间复杂度：O(1)
-2. 返回前 k。 由于缓存了前 k 个查询，因此这一步的时间复杂度为 O(1)。 随着每个步骤的时间复杂度降低到 O(1)，我们的算法只需要 O(1) 来获取前 k 个查询。
+1. 找到前缀节点。时间复杂度： $$O(1)$$
+2. 返回前 k。 由于缓存了前 k 个查询，因此这一步的时间复杂度为 $$O(1)$$。 随着每个步骤的时间复杂度降低到 $$O(1)$$，我们的算法只需要 $$O(1)$$ 来获取前 k 个查询。
 
 #### 数据收集服务
 
@@ -215,7 +215,7 @@ trie 的主要思想包括以下内容：
     根据用例，我们可能会以不同方式聚合数据。 对于 Twitter 等实时应用程序，我们会在较短的时间间隔内聚合数据，因为实时结果很重要。 另一方面，以较低的频率聚合数据，比如每周一次，对于许多用例来说可能就足够了。 在面试过程中，验证实时结果是否重要。 我们假设 trie 每周重建一次。
 *   **Aggregated Data（聚合数据）**
 
-    表 13-4 显示了每周聚合数据的示例。 “time”字段表示一周的开始时间。 “frequency”字段是相应查询在该周内出现的总和。
+    表 13-4 显示了每周聚合数据的示例。 "time" 字段表示一周的开始时间。"frequency" 字段是相应查询在该周内出现的总和。
 
     ![](images/chapter13/table13-4.jpg)
 *   Workers
@@ -233,7 +233,7 @@ trie 的主要思想包括以下内容：
         由于每周都会建立一个新的trie，我们可以定期对其进行快照，序列化，并将序列化后的数据存储在数据库中。 像 MongoDB \[4] 这样的文档存储非常适合序列化数据。
     2.  键值存储
 
-        可以通过应用以下逻辑以哈希表形式 \[4] 表示一个特里树：
+        可以通过应用以下逻辑以哈希表形式 \[4] 表示一个 Trie 树：
 
         * trie 中的每个前缀都映射到哈希表中的键。
         * 每个 trie 节点上的数据都映射到哈希表中的一个值。
@@ -258,7 +258,7 @@ trie 的主要思想包括以下内容：
 查询服务需要闪电般的速度。 我们提出以下优化：
 
 * AJAX 请求：对于 Web 应用程序，浏览器通常会发送 AJAX 请求来获取自动完成结果。 AJAX 的主要好处是发送/接收请求/响应不会刷新整个网页。
-*   浏览器缓存：对于许多应用程序，自动完成搜索建议可能不会在短时间内发生太大变化。 因此，自动完成建议可以保存在浏览器缓存中，以允许后续请求直接从缓存中获取结果。 Google 搜索引擎使用相同的缓存机制。 图 13-12 显示了当您在 Google 搜索引擎上键入“system design interview”时的响应标题。 如您所见，Google 将结果缓存在浏览器中 1 小时。 请注意：缓存控制中的“private”意味着结果仅供单个用户使用，不得由共享缓存缓存。 “max-age=3600”表示缓存的有效期为 3600 秒，也就是一个小时。
+*   浏览器缓存：对于许多应用程序，自动完成搜索建议可能不会在短时间内发生太大变化。 因此，自动完成建议可以保存在浏览器缓存中，以允许后续请求直接从缓存中获取结果。 Google 搜索引擎使用相同的缓存机制。 图 13-12 显示了当您在 Google 搜索引擎上键入 "system design interview" 时的响应标题。 如您所见，Google 将结果缓存在浏览器中 1 小时。 请注意：缓存控制中的 `private` 意味着结果仅供单个用户使用，不得由共享缓存缓存。 `max-age=3600` 表示缓存的有效期为 3600 秒，也就是一个小时。
 
     ![](images/chapter13/figure13-12.jpg)
 * 数据采样：对于大型系统，记录每个搜索查询需要大量的处理能力和存储空间。 数据采样很重要。 例如，系统仅记录每 N 个请求中的 1 个。
@@ -277,7 +277,7 @@ Trie 是由工作人员使用聚合数据创建的。 数据源来自 Analytics 
 
 方法一：每周更新 trie。一旦创建了新的 trie，新的 trie 将取代旧的 trie。
 
-方法二：直接更新单个 trie 节点。 我们尽量避免这种操作，因为它很慢。 但是，如果 trie 的大小很小，这是一个可以接受的解决方案。 当我们更新一个 trie 节点时，它一直到根的祖先都必须更新，因为祖先存储子节点的热门查询。 图 13-13 显示了更新操作如何工作的示例。 在左侧，搜索查询“beer”的原始值为 10。在右侧，它更新为 30。如您所见，节点及其祖先的“beer”值已更新为 30。
+方法二：直接更新单个 trie 节点。 我们尽量避免这种操作，因为它很慢。 但是，如果 trie 的大小很小，这是一个可以接受的解决方案。 当我们更新一个 trie 节点时，它一直到根的祖先都必须更新，因为祖先存储子节点的热门查询。 图 13-13 显示了更新操作如何工作的示例。 在左侧，搜索查询“beer”的原始值为 10。在右侧，它更新为 30。如您所见，节点及其祖先的 "beer" 值已更新为 30。
 
 ![](images/chapter13/figure13-13.jpg)
 
@@ -304,7 +304,7 @@ Trie 是由工作人员使用聚合数据创建的。 数据源来自 Analytics 
 
 乍一看，这种方法似乎很合理，直到你意识到以字母'c'开头的单词比'x'多得多。这就造成了分布不均。
 
-为了缓解数据不平衡问题，我们分析历史数据分布模式并应用更智能的分片逻辑，如图 13-15 所示。 分片映射管理器维护一个查找数据库，用于标识应将行存储在何处。 例如，如果对“s”和“u”、“v”、“w”、“x”、“y”和“z”的合并历史查询数量相似，我们可以维护两个分片：一个 用于“s”，一个用于“u”到“z”。
+为了缓解数据不平衡问题，我们分析历史数据分布模式并应用更智能的分片逻辑，如图 13-15 所示。 分片映射管理器维护一个查找数据库，用于标识应将行存储在何处。 例如，如果对 "s" 和 "u"、"v"、"w"、"x"、"y" 和 "z" 的合并历史查询数量相似，我们可以维护两个分片：一个 用于 "s"，一个用于 "u" 到 "z"。
 
 ![](images/chapter13/figure13-15.jpg)
 
@@ -337,8 +337,8 @@ Trie 是由工作人员使用聚合数据创建的。 数据源来自 Analytics 
 
 ### 参考资料
 
-* \[1] The Life of a Typeahead Query: [https://www.facebook.com/notes/facebook-engineering/the-life-of-a-typeahead-query/389105248919/](https://www.facebook.com/notes/facebook-)
-* \[2] How We Built Prefixy: A Scalable Prefix Search Service for Powering Autocomplete: [https://medium.com/@prefixyteam/how-we-built-prefixy-a-scalable-prefix-search-service-for-powering-autocomplete-c20f98e2eff1](https://medium.com/@prefixyteam/how-we-built-prefixy-a-scalable-prefix-search-service-)
+* \[1] The Life of a Typeahead Query: <https://www.facebook.com/notes/facebook-engineering/the-life-of-a-typeahead-query/389105248919/>
+* \[2] How We Built Prefixy: A Scalable Prefix Search Service for Powering Autocomplete: <https://medium.com/@prefixyteam/how-we-built-prefixy-a-scalable-prefix-search-service-for-powering-autocomplete-c20f98e2eff1>
 * \[3] Prefix Hash Tree An Indexing Data Structure over Distributed Hash Tables: [https://people.eecs.berkeley.edu/\~sylvia/papers/pht.pdf](https://people.eecs.berkeley.edu/\~sylvia/papers/pht.pdf)
 * \[4] MongoDB wikipedia: [https://en.wikipedia.org/wiki/MongoDB](https://en.wikipedia.org/wiki/MongoDB)
 * \[5] Unicode frequently asked questions: [https://www.unicode.org/faq/basic\_q.html](https://www.unicode.org/faq/basic\_q.html)

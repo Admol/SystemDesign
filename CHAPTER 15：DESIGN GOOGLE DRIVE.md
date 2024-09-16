@@ -59,9 +59,9 @@
 * 用户获得10 GB 的可用空间。
 * 假设用户每天上传2 个文件。平均文件大小为 500 KB。
 * 1:1 的读写比。
-* 分配的总空间：5000 万 \* 10 GB = 500 PB
-* 上传 API 的 QPS：1000 万 \* 2 次上传/24 小时/3600 秒 = \~ 240
-* 峰值 QPS = QPS \* 2 = 480
+* 分配的总空间： $$5000 万 \times 10 GB = 500 PB$$
+* 上传 API 的 QPS： $$1000 万 \times 2 次上传/24 小时/3600 秒 \approx 240$$
+* 峰值 QPS : $$QPS \times 2 = 480$$
 
 ### 第2步：提出高层次的设计方案并获得认同
 
@@ -73,9 +73,9 @@
 * 一个数据库，用于跟踪元数据，如用户数据、登录信息、文件信息等。
 * 一个存储系统来存储文件。我们分配了1TB的存储空间来存储文件。
 
-我们花了几个小时设置了一个 Apache 网络服务器、一个 MySql 数据库和一个名为 drive/ 的目录作为根目录来存储上传的文件。在 drive/ 目录下，有一个目录列表，称为名称空间。每个命名空间都包含该用户的所有上传文件。服务器上的文件名与原始文件名保持一致。通过加入命名空间和相对路径，可以唯一标识每个文件或文件夹。
+我们花了几个小时设置了一个 Apache 网络服务器、一个 MySQL 数据库和一个名为 `drive/` 的目录作为根目录来存储上传的文件。在 `drive/` 目录下，有一个目录列表，称为名称空间。每个命名空间都包含该用户的所有上传文件。服务器上的文件名与原始文件名保持一致。通过加入命名空间和相对路径，可以唯一标识每个文件或文件夹。
 
-图15-3显示了/drive目录在左边的样子和它在右边的扩展视图的一个例子。
+图15-3显示了 `/drive` 目录在左边的样子和它在右边的扩展视图的一个例子。
 
 ![](images/chapter15/figure15-3.png)
 
@@ -83,19 +83,19 @@
 
 API 是什么样子的？我们主要需要 3 个 API：上传文件、下载文件和获取文件修订。
 
-1.  上传文件到Google Drive
+1.  上传文件到 Google Drive
 
     支持两种类型的上传：
 
     * 简单上传。当文件较小时使用此上传类型。
     * 可恢复上传。当文件很大并且网络中断的可能性很高时，请使用此上传类型。
 
-    以下是可恢复上传 API 的示例： [https://api.example.com/files/upload?uploadType=resumable](https://api.example.com/files/upload?uploadType=resumable)
+    以下是可恢复上传 API 的示例： `https://api.example.com/files/upload?uploadType=resumable`
 
     参数：
 
-    * uploadType=resumable
-    * data: 待上传的本地文件
+    * `uploadType=resumable`
+    * `data`: 待上传的本地文件
 
     可恢复上传通过以下 3 个步骤 \[2] 实现：
 
@@ -104,34 +104,34 @@ API 是什么样子的？我们主要需要 3 个 API：上传文件、下载文
     * 如果上传受到干扰，请继续上传。
 2.  从Google Drive下载文件
 
-    示例 API：[https://api.example.com/files/download](https://api.example.com/files/download)
+    示例 API：`https://api.example.com/files/download`
 
     参数：
 
-    * path：下载文件路径
+    * `path`：下载文件路径
 
     示例参数：
 
-    ```jsx
+    ```json
     {
-    "path": "/recipes/soup/best_soup.txt"
+      "path": "/recipes/soup/best_soup.txt"
     }
     ```
 3.  获取文件修订
 
-    示例 API：[https://api.example.com/files/list\_revisions](https://api.example.com/files/list\_revisions)
+    示例 API：`https://api.example.com/files/list_revisions`
 
     参数：
 
-    * path：要获取修订历史记录的文件的路径
+    * `path`：要获取修订历史记录的文件的路径
     * 要返回的最大修订数。
 
     示例参数：
 
-    ```jsx
+    ```json
     {
-    "path": "/recipes/soup/best_soup.txt",
-    "limit": 20
+      "path": "/recipes/soup/best_soup.txt",
+      "limit": 20
     }
     ```
 
@@ -143,7 +143,7 @@ API 是什么样子的？我们主要需要 3 个 API：上传文件、下载文
 
 ![](images/chapter15/figure15-4.png)
 
-仅剩 10 MB 的存储空间！这是紧急情况，因为用户无法再上传文件。想到的第一个解决方案是将数据分片，因此将其存储在多个存储服务器上。图 15-5 显示了基于 user\_id 的分片示例。
+仅剩 10 MB 的存储空间！这是紧急情况，因为用户无法再上传文件。想到的第一个解决方案是将数据分片，因此将其存储在多个存储服务器上。图 15-5 显示了基于 `user_id` 的分片示例。
 
 ![](images/chapter15/figure15-5.png)
 
@@ -249,7 +249,7 @@ API 是什么样子的？我们主要需要 3 个 API：上传文件、下载文
 
 **User**：用户表包含有关用户的基本信息，例如用户名、电子邮件、个人资料照片等。
 
-**Device**：设备表存储设备信息。 Push\_id 用于发送和接收移动推送通知。请注意，一个用户可以拥有多个设备。
+**Device**：设备表存储设备信息。 `push_id` 用于发送和接收移动推送通知。请注意，一个用户可以拥有多个设备。
 
 **Namespace**：命名空间是用户的根目录。
 
@@ -269,15 +269,15 @@ API 是什么样子的？我们主要需要 3 个 API：上传文件、下载文
 
 * 添加文件元数据
   1. 客户端1发送了一个请求，要求添加新文件的元数据。
-  2. 将新的文件元数据存储在元数据数据库中，并将文件上传状态改为 "pending"。
+  2. 将新的文件元数据存储在元数据数据库中，并将文件上传状态改为 `pending`。
   3. 通知通知服务正在添加一个新的文件。
   4. 通知服务通知相关客户端（客户端2）有文件正在上传
 * 上传文件到云存储
   1. 客户端 1 将文件内容上传到块服务器。
   2. 块服务器将文件分块成块，压缩，加密块，并将它们上传到云存储。
   3. 文件上传完成后，云存储触发上传完成回调。请求被发送到 API 服务器。
-  4. 在Metadata DB 中，文件状态改为 "uploaded"。
-  5. 通知通知服务文件状态更改为“uploaded”。
+  4. 在Metadata DB 中，文件状态改为 `uploaded`。
+  5. 通知通知服务文件状态更改为 `uploaded`。
   6. 通知服务通知相关客户端（客户端2）文件已完全上传。
 
 编辑文件时，流程类似，不再赘述。
@@ -359,26 +359,26 @@ API 是什么样子的？我们主要需要 3 个 API：上传文件、下载文
 
 ### 参考资料
 
-\[1] Google Drive: https://www.google.com/drive/
+\[1] Google Drive: <https://www.google.com/drive/>
 
-\[2] Upload file data: https://developers.google.com/drive/api/v2/manage-uploads
+\[2] Upload file data: <https://developers.google.com/drive/api/v2/manage-uploads>
 
-\[3] Amazon S3: https://aws.amazon.com/s3
+\[3] Amazon S3: <https://aws.amazon.com/s3>
 
-\[4] Differential Synchronization https://neil.fraser.name/writing/sync/
+\[4] Differential Synchronization <https://neil.fraser.name/writing/sync/>
 
-\[5] Differential Synchronization youtube talk https://www.youtube.com/watch?v=S2Hp\_1jqpY8
+\[5] Differential Synchronization youtube talk <https://www.youtube.com/watch?v=S2Hp_1jqpY8>
 
-\[6] How We’ve Scaled Dropbox: https://youtu.be/PE4gwstWhmc
+\[6] How We’ve Scaled Dropbox: <https://youtu.be/PE4gwstWhmc>
 
 \[7] Tridgell, A., & Mackerras, P. (1996). The rsync algorithm.
 
-\[8] Librsync. (n.d.). Retrieved April 18, 2015, from https://github.com/librsync/librsync
+\[8] Librsync. (n.d.). Retrieved April 18, 2015, from <https://github.com/librsync/librsync>
 
-\[9] ACID: https://en.wikipedia.org/wiki/ACID
+\[9] ACID: <https://en.wikipedia.org/wiki/ACID>
 
 \[10] Dropbox security white paper:
 
-https://www.dropbox.com/static/business/resources/Security\_Whitepaper.pdf
+<https://www.dropbox.com/static/business/resources/Security_Whitepaper.pdf>
 
-\[11] Amazon S3 Glacier: https://aws.amazon.com/glacier/faqs/
+\[11] Amazon S3 Glacier: <https://aws.amazon.com/glacier/faqs/>
