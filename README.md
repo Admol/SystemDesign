@@ -42,8 +42,8 @@
 译者：精灵王 [@Admol](https://github.com/Admol)
 
 ### 目录
-- [第1章 邻近服务](Volume2%2FCHAPTER%2001%EF%BC%9AProximity%20Service.md)
-- [ ] 第2章 附近的好友
+- [第1章 邻近服务](Volume2/CHAPTER 01：Proximity Service.md)
+- [第2章 附近的好友](Volume2/CHAPTER 02：Nearby Friends.md)
 - [ ] 第3章 谷歌地图
 - [ ] 第4章 分布式消息队列
 - [ ] 第5章 指标监控与告警系统
