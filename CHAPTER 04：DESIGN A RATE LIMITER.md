@@ -176,7 +176,9 @@ Shopify，一家电子商务公司，使用泄漏桶来限制速度\[7]。
 
 ![](images/chapter4/figure4-9.jpg)
 
-在图4-9中，系统允许每分钟最多有5个请求，可用的配额在整点分钟时重置。如图所示，在2:00:00和2:01:00之间有5个请求，在2:01:00和2:02:00之间又有五个请求。 在2:00:30和2:01:30之间的1分钟窗口，有10个请求通过了。这是允许请求数量的两倍。 **优点：**
+在图4-9中，系统允许每分钟最多有5个请求，可用的配额在整点分钟时重置。如图所示，在 2:00:00 和 2:01:00 之间有5个请求，在 2:01:00 和 2:02:00 之间又有五个请求。 在 2:00:30 和 2:01:30 之间的1分钟窗口，有10个请求通过了。这是允许请求数量的两倍。
+
+**优点：**
 
 * 内存高效
 * 容易理解
@@ -201,11 +203,11 @@ Shopify，一家电子商务公司，使用泄漏桶来限制速度\[7]。
 
 在这个例子中，限流器允许每分钟2个请求。通常情况下，Linux的时间戳会存储在日志中。然而，在我们的例子中，为了提高可读性，使用了人类可读的时间表示法。
 
-* 当一个新的请求在1:00:01到达时，该日志是空的。因此，该请求被允许。
-* 一个新的请求在1:00:30到达，时间戳1:00:30被插入到日志中。插入后，日志大小为2，不大于允许的数量，因此，该请求被允许。
-* 一个新的请求在1:00:50到达，时间戳被插入到日志中。插入后，日志大小为3，大于允许的大小2。因此，这个请求被拒绝，尽管时间戳仍然在日志中。
-* 一个新的请求在1:01:40到达。在\[1:00:40,1:01:40]范围内的请求是在最新的时间范围内，但在1:00:40之前发送的请求是过时的。
-* 两个过期的时间戳1:00:01 和1:00:30被从日志中删除。在删除操作之后，日志大小变成了2；因此，请求被接受。
+* 当一个新的请求在 $$1:00:01$$ 到达时，该日志是空的。因此，该请求被允许。
+* 一个新的请求在 $$1:00:30$$ 到达，时间戳 $$1:00:30$$ 被插入到日志中。插入后，日志大小为2，不大于允许的数量，因此，该请求被允许。
+* 一个新的请求在 $$1:00:50$$ 到达，时间戳被插入到日志中。插入后，日志大小为3，大于允许的大小2。因此，这个请求被拒绝，尽管时间戳仍然在日志中。
+* 一个新的请求在 $$1:01:40$$ 到达。在 $$\left [1:00:40,1:01:40 \right]$$ 范围内的请求是在最新的时间范围内，但在 $$1:00:40$$ 之前发送的请求是过时的。
+* 两个过期的时间戳 $$1:00:01$$ 和 $$1:00:30$$ 被从日志中删除。在删除操作之后，日志大小变成了2；因此，请求被接受。
 
 **优点：**
 
@@ -226,7 +228,7 @@ Shopify，一家电子商务公司，使用泄漏桶来限制速度\[7]。
 假设限流器允许每分钟最多有7个请求，在上一分钟有5个请求，当前一分钟有3个请求。对于在当前分钟内到达30%位置的新请求，滚动窗口中的请求数用以下公式计算：
 
 * 当前窗口中的请求数量 + 上一个窗口中的请求数量 \* 滚动窗口和上一个窗口的重叠百分比
-* 使用这个公式，我们得到3 + 5 \* 0.7% = 6.5个请求。根据不同的使用情况，这个数字可以向上或向下取整。在我们的例子中，它被向下四舍五入为6。
+* 使用这个公式，我们得到 $$3 + 5 \times 0.7 \% = 6.5$$ 个请求。根据不同的使用情况，这个数字可以向上或向下取整。在我们的例子中，它被向下四舍五入为6。
 
 由于限流器每分钟最多允许7个请求，当前的请求可以通过。然而，再收到一个请求后，就会达到限制。
 
@@ -248,7 +250,7 @@ Shopify，一家电子商务公司，使用泄漏桶来限制速度\[7]。
 我们应该在哪里存储计数器？由于磁盘访问速度慢，使用数据库并不是一个好主意。选择内存缓存是因为它速度快并且支持基于时间的过期策略。 例如，Redis\[11]是实现速率限制的一个流行选择。它是一个内存中的存储，提供两个命令：`INCR`和`EXPIRE`
 
 * `INCR`：它使存储的计数器加1。
-* EXPIRE：它为计数器设置一个超时。如果超时过后，计数器会被自动删除。
+* `EXPIRE`：它为计数器设置一个超时。如果超时过后，计数器会被自动删除。
 
 图4-12显示了速率限制的高层结构，其工作原理如下：
 
@@ -272,7 +274,7 @@ Shopify，一家电子商务公司，使用泄漏桶来限制速度\[7]。
 
 `Lyft`开源了他们的速率限制组件\[12]。我们将窥探该组件的内部情况，并看看一些速率限制规则的例子。
 
-```java
+```yaml
 domain: messaging
 descriptors:
   - key: message_type
@@ -284,7 +286,7 @@ descriptors:
 
 在上述例子中，系统被配置为每天最多允许5条营销信息。下面是另一个例子：
 
-```java
+```yaml
 domain: auth
 descriptors:
   - key: auth_type
@@ -333,11 +335,11 @@ descriptors:
 
 如前所述，限流器在高层的工作原理如下
 
-```
+
 - 从Redis读取计数器的值
 - 检查 ( 计数器 + 1 ) 是否超过阈值
 - 如果不是，则将 Redis 中的计数器值加 1
-```
+
 
 如图4-14所示，在高度并发的环境中会发生竞争条件。
 
@@ -345,7 +347,7 @@ descriptors:
 
 假设 Redis 中的计数器值为 3。如果两个请求在其中一个请求写回值之前同时读取计数器值，则每个请求都会将计数器加 1 并在不检查另一个线程的情况下将其写回。 两个请求（线程）都认为它们具有正确的计数器值 4。但是，正确的计数器值应该是 5
 
-锁是解决竞争条件最明显的解决方案。 但是，锁会显着降低系统速度。 通常使用两种策略来解决这个问题： Lua 脚本 \[13] 和 Redis \[8] 中的 sorted sets 数据结构。 对这些策略感兴趣的读者可以参考相应的参考资料\[8] \[13]。
+锁是解决竞争条件最明显的解决方案。 但是，锁会显着降低系统速度。 通常使用两种策略来解决这个问题： Lua 脚本 [[13](#ref13)] 和 Redis [[8](#ref8)] 中的 sorted sets 数据结构。 对这些策略感兴趣的读者可以参考相应的参考资料[[8](#ref8)] [[13](#ref13)]。
 
 **同步问题**
 
@@ -406,36 +408,38 @@ descriptors:
 
 ### 参考资料
 
-\[1] Rate-limiting strategies and techniques: https://cloud.google.com/solutions/rate-limiting-strategies-techniques
+\[1] Rate-limiting strategies and techniques: [https://cloud.google.com/solutions/rate-limiting-strategies-techniques](https://cloud.google.com/solutions/rate-limiting-strategies-techniques)
 
-\[2] Twitter rate limits: https://developer.twitter.com/en/docs/basics/rate-limits
+\[2] Twitter rate limits: [https://developer.twitter.com/en/docs/basics/rate-limits](https://developer.twitter.com/en/docs/basics/rate-limits)
 
-\[3] Google docs usage limits: https://developers.google.com/docs/api/limits
+\[3] Google docs usage limits: [https://developers.google.com/docs/api/limits](https://developers.google.com/docs/api/limits)
 
-\[4] IBM microservices: https://www.ibm.com/cloud/learn/microservices
+\[4] IBM microservices: [https://www.ibm.com/cloud/learn/microservices](https://www.ibm.com/cloud/learn/microservices)
 
 \[5] Throttle API requests for better throughput:
 
-https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-request-throttling.html
+[https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-request-throttling.html](https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-request-throttling.html)
 
-\[6] Stripe rate limiters: https://stripe.com/blog/rate-limiters
+\[6] Stripe rate limiters: [https://stripe.com/blog/rate-limiters](https://stripe.com/blog/rate-limiters)
 
-\[7] Shopify REST Admin API rate limits: https://help.shopify.com/en/api/reference/rest-admin-api-rate-limits
+\[7] Shopify REST Admin API rate limits: [https://help.shopify.com/en/api/reference/rest-admin-api-rate-limits](https://help.shopify.com/en/api/reference/rest-admin-api-rate-limits)
 
-\[8] Better Rate Limiting With Redis Sorted Sets:https://engineering.classdojo.com/blog/2015/02/06/rolling-rate-limiter/
+<a id="ref8"></a>
+\[8] Better Rate Limiting With Redis Sorted Sets: [https://engineering.classdojo.com/blog/2015/02/06/rolling-rate-limiter/](https://engineering.classdojo.com/blog/2015/02/06/rolling-rate-limiter/)
 
-\[9] System Design — Rate limiter and Data modelling:https://medium.com/@saisandeepmopuri/system-design-rate-limiter-and-data-modelling-9304b0d18250
+\[9] System Design — Rate limiter and Data modelling: [https://medium.com/@saisandeepmopuri/system-design-rate-limiter-and-data-modelling-9304b0d18250](https://medium.com/@saisandeepmopuri/system-design-rate-limiter-and-data-modelling-9304b0d18250)
 
-\[10] How we built rate limiting capable of scaling to millions of domains:https://blog.cloudflare.com/counting-things-a-lot-of-different-things/
+\[10] How we built rate limiting capable of scaling to millions of domains: [https://blog.cloudflare.com/counting-things-a-lot-of-different-things/](https://blog.cloudflare.com/counting-things-a-lot-of-different-things/)
 
-\[11] Redis website: https://redis.io/
+\[11] Redis website: [https://redis.io/](https://redis.io/)
 
-\[12] Lyft rate limiting: https://github.com/lyft/ratelimit
+\[12] Lyft rate limiting: [https://github.com/lyft/ratelimit](https://github.com/lyft/ratelimit)
 
-\[13] Scaling your API with rate limiters:https://gist.github.com/ptarjan/e38f45f2dfe601419ca3af937fff574d#request-rate-limiter
+<a id="ref13"></a>
+\[13] Scaling your API with rate limiters: [https://gist.github.com/ptarjan/e38f45f2dfe601419ca3af937fff574d#request-rate-limiter](https://gist.github.com/ptarjan/e38f45f2dfe601419ca3af937fff574d#request-rate-limiter)
 
-\[14] What is edge computing: https://www.cloudflare.com/learning/serverless/glossary/what-is-edge-computing/
+\[14] What is edge computing: [https://www.cloudflare.com/learning/serverless/glossary/what-is-edge-computing/](https://www.cloudflare.com/learning/serverless/glossary/what-is-edge-computing/)
 
-\[15] Rate Limit Requests with Iptables: https://blog.programster.org/rate-limit-requests-with-iptables
+\[15] Rate Limit Requests with Iptables: [https://blog.programster.org/rate-limit-requests-with-iptables](https://blog.programster.org/rate-limit-requests-with-iptables)
 
-\[16] OSI model: https://en.wikipedia.org/wiki/OSI\_model#Layer\_architecture
+\[16] OSI model: [https://en.wikipedia.org/wiki/OSI\_model#Layer\_architecture](https://en.wikipedia.org/wiki/OSI\_model#Layer\_architecture)

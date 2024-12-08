@@ -52,21 +52,25 @@
 
     要发布一个帖子，将向服务器发送一个HTTP POST请求。该API显示如下。
 
+    ```
     POST /v1/me/feed
+    ```
 
     参数：
 
-    * content：帖子内容的文本。
-    * auth\_token：它用于验证API请求。
+    * `content`：帖子内容的文本。
+    * `auth_token`：它用于验证API请求。
 *   信息流检索 API
 
     检索信息流的API如下：
 
+    ```
     GET /v1/me/feed
+    ```
 
     参数：
 
-    * auth\_token：它用于验证API请求。
+    * `auth_token`：它用于验证API请求。
 
 #### 信息发布（Feed publishing）
 
@@ -74,7 +78,7 @@
 
 ![](images/chapter11/figure11-2.jpg)
 
-* **User（用户）**：用户可以在浏览器或移动应用程序上查看信息流。一个用户通过API发布内容为 "你好 "的帖子： /v1/me/feed?content=Hello\&auth\_token={auth\_token}
+* **User（用户）**：用户可以在浏览器或移动应用程序上查看信息流。一个用户通过API发布内容为 "你好 "的帖子： `/v1/me/feed?content=Hello&auth_token={auth_token}`
 * Load balancer（负载均衡器）：将流量分配给网络服务器。
 * Web servers（网络服务器）：网络服务器将流量重定向到不同的内部服务。
 * Post service（帖子服务）：在数据库和缓存中持久保存帖子。
@@ -89,7 +93,7 @@
 
 ![](images/chapter11/figure11-3.jpg)
 
-* User（用户）：一个用户发送了一个请求来检索她的信息。 该请求看起来像这样：/ v1/me/feed。
+* User（用户）：一个用户发送了一个请求来检索她的信息。 该请求看起来像这样：`/v1/me/feed`。
 * Load balancer（负载均衡器）：将流量分配给网络服务器。
 * Web servers（网络服务器）：网络服务器将请求路由到信息发布服务。
 * Newsfeed service（信息馈送服务）：信息馈送服务从缓存中获取信息。
@@ -151,8 +155,8 @@ Fanout 是将帖子传递给所有朋友的过程。两种类型的扇出模型�
 1. 从图形数据库中获取朋友 ID。 图数据库适用于管理朋友关系和朋友推荐。 希望了解更多有关此概念的感兴趣的读者应参阅参考资料 \[2]。
 2. 从用户缓存中获取朋友信息。然后，系统根据用户设置过滤出朋友。例如，如果你把某人调成静音，她的帖子将不会显示在你的信息流中，尽管你们仍然是朋友。帖子可能不显示的另一个原因是，用户可以有选择地与特定的朋友分享信息或对其他人隐藏信息。
 3. 将好友列表和新帖子 ID 发送到消息队列。
-4. Fanout worker 从消息队列中获取数据并将信息流数据存储在信息流缓存中。 你可以将信息流缓存视为一个 \<post\_id, user\_id>结构的映射表。 每当发布新帖子时，新帖子将被追加到信息流表中，如图 11-6 所示。 如果我们将整个用户和帖子对象存储在缓存中，内存消耗会变得非常大。 因此，仅存储 ID。 为了保持较小的内存大小，我们设置了一个可配置的限制。 用户滚动浏览信息流中数千个帖子的机会很小。 大多数用户只对最新的内容感兴趣，所以缓存未命中率低。
-5.  将 \<post\_id, user\_id > 存储在信息流缓存中。 图 11-6 显示了缓存中信息流的示例。
+4. Fanout worker 从消息队列中获取数据并将信息流数据存储在信息流缓存中。 你可以将信息流缓存视为一个 `<post_id, user_id>` 结构的映射表。 每当发布新帖子时，新帖子将被追加到信息流表中，如图 11-6 所示。 如果我们将整个用户和帖子对象存储在缓存中，内存消耗会变得非常大。 因此，仅存储 ID。 为了保持较小的内存大小，我们设置了一个可配置的限制。 用户滚动浏览信息流中数千个帖子的机会很小。 大多数用户只对最新的内容感兴趣，所以缓存未命中率低。
+5. 将 `<post_id, user_id>` 存储在信息流缓存中。 图 11-6 显示了缓存中信息流的示例。
 
     ![](images/chapter11/figure11-6.jpg)
 
@@ -212,8 +216,8 @@ Fanout 是将帖子传递给所有朋友的过程。两种类型的扇出模型�
 
 \[1] How News Feed Works:
 
-https://www.facebook.com/help/327131014036297/
+<https://www.facebook.com/help/327131014036297/>
 
 \[2] Friend of Friend recommendations Neo4j and SQL Sever:
 
-http://geekswithblogs.net/brendonpage/archive/2015/10/26/friend-of-friend-recommendations-with-neo4j.aspx
+<http://geekswithblogs.net/brendonpage/archive/2015/10/26/friend-of-friend-recommendations-with-neo4j.aspx>

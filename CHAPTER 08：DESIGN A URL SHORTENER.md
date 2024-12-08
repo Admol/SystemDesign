@@ -9,11 +9,11 @@
 
 候选人：你能举个例子说明URL缩短器的工作原理吗？
 
-面试官：假设 URL [https://www.systeminterview.com/q=chatsystem\&c=loggedin\&v=v3\&l=long](https://www.systeminterview.com/q=chatsystem\&c=loggedin\&v=v3\&l=long) 是原始 URL。你的服务创建了一个长度较短的别名：[https://tinyurl.com/y7keocwj](https://tinyurl.com/y7keocwj%E3%80%82%E5%A6%82%E6%9E%9C%E6%82%A8%E5%8D%95%E5%87%BB%E5%88%AB%E5%90%8D%EF%BC%8C%E5%AE%83%E4%BC%9A%E5%B0%86%E6%82%A8%E9%87%8D%E5%AE%9A%E5%90%91%E5%88%B0%E5%8E%9F%E5%A7%8B)。如果你单击较短的别名URL，它会将你重定向到原始 URL。
+面试官：假设 URL `https://www.systeminterview.com/q=chatsystem&c=loggedin&v=v3&l=long` 是原始 URL。你的服务创建了一个长度较短的别名：`https://tinyurl.com/y7keocwj`。如果你单击较短的别名URL，它会将你重定向到原始 URL。
 
 候选人：流量是多少？
 
-面试官：每天产生1亿个[UR](https://www.notion.so/f56f4bc43ae9455780d5c541cb762a83)L。
+面试官：每天产生1亿个[URL](https://www.notion.so/f56f4bc43ae9455780d5c541cb762a83)。
 
 候选人：缩短后的URL有多长？
 
@@ -57,7 +57,7 @@ API端点促进了客户和服务器之间的通信。我们将设计REST风格�
     **POST api/v1/data/shorten**
 
     * 请求参数：{longUrl: longURLString}。
-    * 返回 shortUR
+    * 返回 shortURL
 2.  URL重定向。为了将一个短的URL重定向到相应的长的URL，一个客户端发送一个GET请求。该API看起来像这样：
 
     **GET api/v1/shortUrl**
@@ -88,7 +88,7 @@ API端点促进了客户和服务器之间的通信。我们将设计REST风格�
 
 #### 缩短网址
 
-让我们假设短的URL看起来像这样：[www.tinyurl.com/{hashValue}](http://www.tinyurl.com/%7BhashValue%7D%E3%80%82%E4%B8%BA%E4%BA%86%E6%94%AF%E6%8C%81%E7%BC%A9%E7%9F%ADURL%E7%9A%84%E7%94%A8%E4%BE%8B%EF%BC%8C%E6%88%91%E4%BB%AC%E5%BF%85%E9%A1%BB%E6%89%BE%E5%88%B0%E4%B8%80%E4%B8%AA%E5%93%88%E5%B8%8C%E5%87%BD%E6%95%B0fx%EF%BC%8C%E5%B0%86%E9%95%BFURL%E6%98%A0%E5%B0%84%E5%88%B0hashValue%EF%BC%8C%E5%A6%82%E5%9B%BE8-3%E6%89%80%E7%A4%BA%E3%80%82)。为了支持缩短URL的用例，我们必须找到一个哈希函数fx，将长URL映射到hashValue，如图8-3所示。
+让我们假设短的URL看起来像这样：`www.tinyurl.com/{hashValue}`。为了支持缩短URL的用例，我们必须找到一个哈希函数fx，将长URL映射到hashValue，如图8-3所示。
 
 ![](images/chapter8/figure8-3.jpg)
 
@@ -111,15 +111,15 @@ API端点促进了客户和服务器之间的通信。我们将设计REST风格�
 
 #### 哈希函数
 
-哈希函数用于将一个长的URL哈希成一个短的URL，也称为hashValue。
+哈希函数用于将一个长的URL哈希成一个短的URL，也称为 hashValue。
 
 **哈希值的长度**
 
-hashValue由\[0-9, a-z, A-Z]中的字符组成，包含10+26+26=62个可能的字符。要计算hashValue的长度，请找出最小的n，使62^n≥365亿。根据估计，系统必须支持多达 3650 亿个 URL。 表 8-1 显示了 hashValue 的长度和它可以支持的相应的最大 URL 数。
+hashValue 由\[0-9, a-z, A-Z]中的字符组成，包含 $$10+26+26=62$$ 个可能的字符。要计算 hashValue 的长度，请找出最小的 n，使 $$62^n \ge 365亿$$。根据估计，系统必须支持多达 3650 亿个 URL。 表 8-1 显示了 hashValue 的长度和它可以支持的相应的最大 URL 数。
 
 ![](images/chapter8/table8-1.jpg)
 
-当n = 7时，62 ^ n = \~3.5万亿，3.5万亿足以容纳3650亿个URL，所以hashValue的长度为7。
+当 $$n = 7$$ 时， $$62 ^ n \approx 3.5万亿$$，3.5 万亿足以容纳 3650亿个URL，所以 hashValue 的长度为 7。
 
 我们将探讨两种类型的URL缩短器的哈希函数。第一种是 "哈希+碰撞解决"，第二种是 "base 62 转换"。让我们逐一来看看它们。
 
@@ -139,10 +139,11 @@ hashValue由\[0-9, a-z, A-Z]中的字符组成，包含10+26+26=62个可能的�
 
 **base 62 转换**
 
-Base 转换是 URL 缩短器常用的另一种方法。 Base 转换有助于在不同的数字表示系统之间转换成相同的数字。 使用 Base 62 转换，因为 hashValue 有 62 个可能的字符。 让我们用一个例子来解释转换的工作原理：将 $11157\_{10}$ 转换为 base 62 表示（$11157\_{10}$ 在 base 10 系统中表示 11157）。
+Base 转换是 URL 缩短器常用的另一种方法。 Base 转换有助于在不同的数字表示系统之间转换成相同的数字。 使用 Base 62 转换，因为 hashValue 有 62 个可能的字符。 让我们用一个例子来解释转换的工作原理：将 $$11157_{10}$$ 转换为 base 62 表示（ $$11157_{10}$$ 在 base 10 系统中表示 11157）。
+
 
 * 从名字上看，base 62 是一种使用 62 个字符进行编码的方式。 映射是： 0-0, ..., 9-9, 10-a, 11-b, ..., 35-z, 36-A, ..., 61-Z，其中“a”代表 10，“Z” ' 代表 61，等等。
-*   $11157\_{10}$ = 2 x $62^2$ + 55 x $62^1$ + 59 x $62^0$ = \[2, 55, 59] -> \[2, T, X] 以 base 62 表示。
+* $$11157_{10} = 2 \times 62^2 + 55 \times 62^1 + 59 \times 62^0 = \left [2, 55, 59 \right ] \rightarrow \left [2, T, X \right]$$ 以 base 62 表示。
 
     对话过程如图8-6所示。
 
@@ -186,13 +187,13 @@ Base 转换是 URL 缩短器常用的另一种方法。 Base 转换有助于在�
 
 #### URL重定向的深入研究
 
-图 8-8 显示了 URL 重定向的详细设计。 由于读取多于写入，\<shortURL, longURL> 映射存储在缓存中以提高性能。
+图 8-8 显示了 URL 重定向的详细设计。 由于读取多于写入，`<shortURL, longURL>` 映射存储在缓存中以提高性能。
 
 ![](images/chapter8/figure8-8.jpg)
 
 URL重定向的流程总结如下：
 
-* 一个用户点击了一个短的URL链接：https://tinyurl.com/zn9edcu
+* 一个用户点击了一个短的URL链接：`https://tinyurl.com/zn9edcu`
 * 负载均衡器将请求转发给网络服务器
 * 如果shortURL已经在缓存中，直接返回longURL。
 * 如果短URL不在缓存中，从数据库中获取长URL。如果它不在数据库中，很可能是用户输入了一个无效的短网址。
@@ -214,6 +215,6 @@ URL重定向的流程总结如下：
 
 ### 参考资料
 
-\[1] A RESTful Tutorial: [https://www.restapitutorial.com/index.html](https://www.restapitutorial.com/index.html)
+\[1] A RESTful Tutorial: <https://www.restapitutorial.com/index.html>
 
-\[2] Bloom filter: [https://en.wikipedia.org/wiki/Bloom\_filter](https://en.wikipedia.org/wiki/Bloom\_filter)
+\[2] Bloom filter: <https://en.wikipedia.org/wiki/Bloom_filter>
