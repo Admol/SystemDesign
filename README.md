@@ -44,7 +44,7 @@
 - [第1章 邻近服务](<Volume2/CHAPTER 01：Proximity Service.md>)
 - [第2章 附近的好友](<Volume2/CHAPTER 02：Nearby Friends.md>)
 - [ ] 第3章 谷歌地图
-- [ ] 第4章 分布式消息队列
+- [第4章 分布式消息队列](<Volume2/CHAPTER 04: Distributed Message Queue.md>)
 - [ ] 第5章 指标监控与告警系统
 - [ ] 第6章 广告点击事件聚合
 - [ ] 第7章 酒店预订系统

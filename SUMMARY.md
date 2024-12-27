@@ -26,7 +26,7 @@
 * [第01章：邻近服务](<Volume2/CHAPTER 01：Proximity Service.md>)
 * [第02章：附近的好友](<Volume2/CHAPTER 02：Nearby Friends.md>)
 * [第03章：谷歌地图](<Volume2/CHAPTER 03：Google Maps.md>)
-* [第04章：分布式消息队列](<Volume2/CHAPTER 04：Distributed Message Queue.md>)
+* [第04章：分布式消息队列](<Volume2/CHAPTER 04: Distributed Message Queue.md>)
 * [第05章：指标监控与告警系统](<Volume2/CHAPTER 05：Metrics Monitoring and Alerting System.md>)
 * [第06章：广告点击事件聚合](<Volume2/CHAPTER 06：Ad Click Event Aggregation.md>)
 * [第07章：酒店预订系统](<Volume2/CHAPTER 07：Hotel Reservation System.md>)
