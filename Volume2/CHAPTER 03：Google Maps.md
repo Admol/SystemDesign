@@ -570,48 +570,48 @@ ETA 服务 -> 自适应 ETA 和重新路由 -> 活跃用户数据库
 
 ## 章节总结
 
-*   **谷歌地图 (Google Maps)**
-   *   **步骤 1 (step 1)**
-      *   **功能需求 (functional req)**
-         *   用户位置更新 (user location update)
-         *   导航服务 (navigation service)
-         *   地图渲染 (map rendering)
-      *   **非功能需求 (non-functional req)**
-         *   高精度 (highly accurate)
-         *   流畅导航 (smooth navigation)
-         *   数据使用 (data usage)
-      *   **估算 (estimation)**
-         *   存储 (storage)
-         *   服务器流量 (server traffic)
-   *   **步骤 2 (step 2)**
-      *   **地图 101 (map 101)**
-         *   定位系统 (positioning system)
-         *   从 3D 到 2D (going from 3d to 2d)
-         *   地理编码 (geocoding)
-         *   地理哈希 (geohashing)
-         *   路由瓦片 (routing tiles)
-      *   **高层设计 (high-level design)**
-         *   位置服务 (location service)
-         *   导航服务 (navigation service)
-         *   地图渲染 (map rendering)
-   *   **步骤 3 (step 3)**
-      *   **数据 (data)**
-         *   路由瓦片 (routing tiles)
-         *   用户位置 (user location)
-         *   地点 (places)
-         *   预计算图像 (precomputed images)
-      *   **服务 (services)**
-         *   位置服务 (location service) -> 如何使用位置数据 (how location data is used)
-         *   渲染地图 (rendering map)
-            *   预计算瓦片 (precomputed tiles)
-            *   使用矢量 (use vectors)
-         *   导航服务 (navigation service)
-            *   地理编码 (geocoding)
-            *   路线规划器 (route planner)
-            *   最短路径 (shortest-path)
-            *   ETA 服务 (ETA service)
-            *   自适应 ETA 和重新路由 (adaptive ETA and rerouting)
-   *   **步骤 4 (step 4)** -> 总结 (wrap up)
+* **谷歌地图 (Google Maps)**
+   * **步骤 1 (step 1)**
+      * **功能需求 (functional req)**
+         * 用户位置更新 (user location update)
+         * 导航服务 (navigation service)
+         * 地图渲染 (map rendering)
+      * **非功能需求 (non-functional req)**
+         * 高精度 (highly accurate)
+         * 流畅导航 (smooth navigation)
+         * 数据使用 (data usage)
+      * **估算 (estimation)**
+         * 存储 (storage)
+         * 服务器流量 (server traffic)
+   * **步骤 2 (step 2)**
+      * **地图 101 (map 101)**
+         * 定位系统 (positioning system)
+         * 从 3D 到 2D (going from 3d to 2d)
+         * 地理编码 (geocoding)
+         * 地理哈希 (geohashing)
+         * 路由瓦片 (routing tiles)
+      * **高层设计 (high-level design)**
+         * 位置服务 (location service)
+         * 导航服务 (navigation service)
+         * 地图渲染 (map rendering)
+   * **步骤 3 (step 3)**
+      * **数据 (data)**
+         * 路由瓦片 (routing tiles)
+         * 用户位置 (user location)
+         * 地点 (places)
+         * 预计算图像 (precomputed images)
+      * **服务 (services)**
+         * 位置服务 (location service) -> 如何使用位置数据 (how location data is used)
+         * 渲染地图 (rendering map)
+            * 预计算瓦片 (precomputed tiles)
+            * 使用矢量 (use vectors)
+         * 导航服务 (navigation service)
+            * 地理编码 (geocoding)
+            * 路线规划器 (route planner)
+            * 最短路径 (shortest-path)
+            * ETA 服务 (ETA service)
+            * 自适应 ETA 和重新路由 (adaptive ETA and rerouting)
+   * **步骤 4 (step 4)** -> 总结 (wrap up)
 
 ## 参考资料
 
