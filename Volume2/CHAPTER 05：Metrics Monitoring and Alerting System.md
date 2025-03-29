@@ -2,7 +2,7 @@
 
 本章聚焦于设计一个高扩展性的指标监控与报警系统，这对于确保系统的高可用性和可靠性至关重要。
 
-# 第一步：理解问题并确定设计范围
+# 第1步：了解问题并确定设计范围
 
 指标监控系统可以有多种含义——比如，如果面试官仅仅只关心基础设施指标，你就不应该设计一个日志聚合系统。
 
@@ -25,7 +25,7 @@
  * 候选人：是否需要支持分布式系统追踪？
  * 面试官：不需要
 
-## High-level requirements and assumptions
+## 功能需求
 需要监控的基础设施规模较大：
  * 1亿日活用户
  * 1000个服务器池 × 每池100台机器 × 每台机器约100个指标 = 约1000万指标
@@ -48,7 +48,7 @@
  * 日志监控：ELK Stack是此类需求的流行解决方案。
  * 分布式系统追踪：与请求在多个服务间的生命周期相关的数据收集。
 
-# 第二步：提出高层设计并达成一致
+# 第2步：提出高层次的设计方案并获得认同
 ## 基础组件
 指标监控和警报系统涉及五个核心组件：
 ![metrics-monitoring-core-components](../images/v2/chapter05/metrics-monitoring-core-components.png)
@@ -100,10 +100,8 @@ CPU.load host=webserver01,region=us-west 1613707265 83
  * x 轴表示时间
  * y 轴表示查询的维度 - 例如指标名称、标签等
 
-由于我们收集了大量指标，因此数据访问模式是写入密集且读取高峰，但访问频率不高，尽管在突发事件（例如，发生持续事件时）时会突然访问。
-这些指标数据的写入模式特点是写入密集且高峰读取，但访问频率不高。因为
 
-这种数据访问模式是写重型且具有突发读取特性。因为我们收集了大量的指标，但它们不经常被访问，尽管在某些情况下，比如发生事故时，会有突发的读取需求。
+这些指标数据的写入模式特点是写入密集且高峰读取，但访问频率不高。因为这种数据访问模式是写重型且具有突发读取特性。虽然我们收集了大量的指标，但它们不经常被访问，尽管在某些情况下，比如发生事故时，会有突发的读取需求。
 
 数据存储系统是此设计的核心
  * 不建议使用通用数据库来解决这个问题，即使你可以通过专家级的调优化以实现良好的扩展性
@@ -124,116 +122,127 @@ InfluxDB的示例规模 - 在配置了8个核心和32GB内存的情况下，每�
 时序数据库的一个特点是能够通过标签高效地聚合和分析大量的时序数据。
 例如，InfluxDB为每个标签构建索引。
 
-然而，值得注意的是要保持标签的基数较低——即不要使用过多的唯一标签。
+然而，值得注意的是要保持标签的数量较低——即不要使用过多的唯一标签。
 
-
-## High-level Design
+## 顶层设计
 ![high-level-design](../images/v2/chapter05/high-level-design.png)
- * Metrics source - can be application servers, SQL databases, message queues, etc.
- * Metrics collector - Gathers metrics data and writes to time-series database
- * Time-series database - stores metrics as time-series. Provides a custom query interface for analyzing large amounts of metrics.
- * Query service - Makes it easy to query and retrieve data from the time-series DB. Could be replaced entirely by the DB's interface if it's sufficiently powerful.
- * Alerting system - Sends alert notifications to various alerting destinations.
- * Visualization system - Shows metrics in the form of graphs/charts.
+ * 指标来源 - 可以是应用服务器、SQL 数据库、消息队列等。
+ * 指标收集器 - 收集指标数据并写入时序数据库。
+ * 时序数据库 - 以时序方式存储指标数据，并提供自定义查询接口以分析大量指标数据。
+ * 查询服务 - 方便从时序数据库查询和检索数据。如果数据库接口足够强大，可以完全替代此组件。
+ * 告警系统 - 发送告警通知到各种告警目的地。
+ * 可视化系统 - 以图表/图形的形式展示指标数据。
 
-# Step 3 - Design Deep Dive
-Let's deep dive into several of the more interesting parts of the system.
+# 第3步：深入设计
+接下来，我们将深入到系统的几个有趣的部分。
 
-## Metrics collection
-For metrics collection, occasional data loss is not critical. It's acceptable for clients to fire and forget.
+## 指标收集
+对于指标收集而言，偶尔的数据丢失并不关键。客户端可以采用“发送即忘”（fire-and-forget）的方式。
+
 ![metrics-collection](../images/v2/chapter05/metrics-collection.png)
 
-There are two ways to implement metrics collection - pull or push.
+指标收集有两种实现方式：拉取（pull） 或 推送（push）。
 
-Here's how the pull model might look like:
+下面是拉取模型的工作方式：
 ![pull-model-example](../images/v2/chapter05/pull-model-example.png)
 
-For this solution, the metrics collector needs to maintain an up-to-date list of services and metrics endpoints.
-We can use Zookeeper or etcd for that purpose - service discovery.
+在这种方案中，指标收集器需要维护一份最新的服务和指标端点列表。我们可以使用 Zookeeper 或 etcd 进行通过**服务发现**来实现。
 
-Service discovery contains contains configuration rules about when and where to collect metrics from:
+
+服务发现包含关于**何时**以及**从哪里**收集指标的配置规则。
 ![service-discovery-example](../images/v2/chapter05/service-discovery-example.png)
 
-Here's a detailed explanation of the metrics collection flow:
+
 ![metrics-collection-flow](../images/v2/chapter05/metrics-collection-flow.png)
- * Metrics collector fetches configuration metadata from service discovery. This includes pulling interval, IP addresses, timeout & retry params.
- * Metrics collector pulls metrics data via a pre-defined http endpoint (eg `/metrics`). This is typically done by a client library.
- * Alternatively, the metrics collector can register a change event notification with the service discovery to be notified once the service endpoint changes.
- * Another option is for the metrics collector to periodically poll for metrics endpoint configuration changes.
+以下是指标收集流程的详细说明：
+ * 指标收集器从服务发现中获取配置信息，包括拉取间隔、IP 地址、超时及重试参数。
+ * 指标收集器通过预定义的 HTTP 端点（例如 /metrics）拉取指标数据，通常由客户端库完成此操作。
+ * 另一种方式是，指标收集器可以向服务发现注册变更事件通知，以便在服务端点发生变化时收到通知。
+ * 另一种选择是，指标收集器可以定期轮询，检查指标端点配置是否有变化。
 
-At our scale, a single metrics collector is not enough. There must be multiple instances. 
-However, there must also be some kind of synchronization among them so that two collectors don't collect the same metrics twice.
+在我们的规模下，单个指标收集器 远远不够，必须运行多个实例。
+然而，也需要某种同步机制，以确保不同的收集器不会重复收集相同的指标。
 
-One solution for this is to position collectors and servers on a consistent hash ring and associate a set of servers with a single collector only:
+
+
+
+一种解决方案是使用一致性哈希环（consistent hash ring），将收集器和服务器映射到哈希环上，并确保每个服务器仅被一个收集器关联。
 ![consistent-hash-ring](../images/v2/chapter05/consistent-hash-ring.png)
 
-With the push model, on the other hand, services push their metrics to the metrics collector proactively:
+而推送模型（push model）的工作方式则不同，服务会主动将指标数据推送到指标收集器。
 ![push-model-example](../images/v2/chapter05/push-model-example.png)
 
-In this approach, typically a collection agent is installed alongside service instances. 
-The agent collects metrics from the server and pushes them to the metrics collector.
+在推送模型这种方案中，通常会在服务实例旁安装一个收集代理（collection agent）。
+该代理负责从服务器收集指标，然后推送到指标收集器。
 ![metrics-collector-agent](../images/v2/chapter05/metrics-collector-agent.png)
 
-With this model, we can potentially aggregate metrics before sending them to the collector, which reduces the volume of data processed by the collector.
+这种模型的一个优点是，我们可以在发送到收集器之前聚合指标数据，从而减少收集器需要处理的数据量。
 
-On the flip side, metrics collector can reject push requests as it can't handle the load. 
-It is important, hence, to add the collector to an auto-scaling group behind a load balancer.
+但另一方面，指标收集器可能会因负载过高而拒绝推送请求。
+因此，建议将收集器添加到自动扩展组（auto-scaling group）并置于负载均衡器（load balancer）之后，以提高系统的可扩展性。
 
-so which one is better? There are trade-offs between both approaches and different systems use different approaches:
- * Prometheus uses a pull architecture
- * Amazon Cloud Watch and Graphite use a push architecture
+那么，哪种方式更好呢？要根据实际情况对两种方法进行权衡（trade-offs），不同的系统会选择不同的架构：
+ * Prometheus 采用 拉取（pull） 架构。
+ * Amazon CloudWatch 和 Graphite 采用 推送（push） 架构。
 
-Here are some of the main differences between push and pull:
+以下是推送数据与拉取数据的一些主要区别：
 |                                        | Pull                                                                                                                                                                                                    | Push                                                                                                                                                                                                                                    |
 | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Easy debugging                         | The /metrics endpoint on application servers used for pulling metrics can be used to view metrics at any time. You can even do this on your laptop. Pull wins.                                          | If the metrics collector doesn’t receive metrics, the problem might be caused by network issues.                                                                                                                                        |
-| Health check                           | If an application server doesn’t respond to the pull, you can quickly figure out if an application server is down. Pull wins.                                                                           | If the metrics collector doesn’t receive metrics, the problem might be caused by network issues.                                                                                                                                        |
-| Short-lived jobs                       |                                                                                                                                                                                                         | Some of the batch jobs might be short-lived and don’t last long enough to be pulled. Push wins. This can be fixed by introducing push gateways for the pull model [22].                                                                 |
-| Firewall or complicated network setups | Having servers pulling metrics requires all metric endpoints to be reachable. This is potentially problematic in multiple data center setups. It might require a more elaborate network infrastructure. | If the metrics collector is set up with a load balancer and an auto-scaling group, it is possible to receive data from anywhere. Push wins.                                                                                             |
-| Performance                            | Pull methods typically use TCP.                                                                                                                                                                         | Push methods typically use UDP. This means the push method provides lower-latency transports of metrics. The counterargument here is that the effort of establishing a TCP connection is small compared to sending the metrics payload. |
-| Data authenticity                      | Application servers to collect metrics from are defined in config files in advance. Metrics gathered from those servers are guaranteed to be authentic.                                                 | Any kind of client can push metrics to the metrics collector. This can be fixed by whitelisting servers from which to accept metrics, or by requiring authentication.                                                                   |
+| 易于调试                        | 应应用服务器上的 /metrics 端点可用于随时查看指标数据，甚至可以在你的笔记本电脑上执行此操作。拉取模式更好。          | 如果指标收集器没有收到指标，问题可能由网络问题引起。                                                                                                        |
+| 健康检查                          | 如果应用服务器没有响应拉取请求，你可以快速判断应用服务器是否宕机。                        | 如果指标收集器没有收到指标，问题可能由网络问题引起。                                                                                                                |
+| 短生命周期任务                     |                                                                                                                                           -                                                              | 一些批处理任务可能生命周期较短，持续时间不足以被拉取到。推送模式胜出。这可以通过为拉取模式引入推送网关来解决 [22]。                                                               |
+| 防火墙或复杂的网络设置 | 让服务器拉取指标数据要求所有的指标端点都可访问，在多数据中心架构中可能会遇到问题。这可能需要更复杂的网络基础设施。 | 如果指标收集器配备了负载均衡器和自动扩展组，那么它可以从任何地方接收数据。推送模式更好。                                                              |
+| 性能                            | 拉取方法通常使用 TCP。                                                                                                                                   | 推送方法通常使用 UDP。这意味着推送方法提供了更低延迟的指标传输。但是反对观点认为，建立 TCP 连接的开销相较于发送指标数据的负载而言是微不足道的。|
+| 数据真实性                     | 需要收集指标的应用服务器会提前在配置文件中定义，因此从这些服务器收集的指标数据是可信的。               | A任何客户端都可以向指标收集器推送数据。这可以通过白名单限制数据来源或要求身份认证来解决。                      |
 
-There is no clear winner. A large organization probably needs to support both. There might not be a way to install a push agent in the first place.
+这其中没有明确的最佳方案。对于大型项目而言，可能需要同时支持推（push）和拉（pull）两种模式。另外，在某些情况下，可能无法安装推送代理（push agent），这使得拉取模式成为唯一可行的选择。
 
-## Scale the metrics transmission pipeline
+## 扩展指标传输管道
 ![metrics-transmission-pipeline](../images/v2/chapter05/metrics-transmission-pipeline.png)
 
-The metrics collector is provisioned in an auto-scaling group, regardless if we use the push or pull model.
 
-There is a chance of data loss if the time-series DB is down, however. To mitigate this, we'll provision a queuing mechanism:
+无论我们使用推（push）模型还是拉（pull）模型。指标收集器应该被部署成可自动扩展的。
+
+然而，如果时间序列数据库（TSDB）宕机，可能会导致数据丢失。为缓解这一风险，我们将引入一个队列机制：
+* 指标收集器将指标数据推送到 Kafka。
+* 消费者或流式处理服务（如 Apache Storm、Flink 或 Spark）对数据进行处理，并将其推送至时间序列数据库。
 ![queuing-mechanism](../images/v2/chapter05/queuing-mechanism.png)
- * Metrics collectors push metrics data into kafka
- * Consumers or stream processing services such as Apache Storm, Flink or Spark process the data and push it to the time-series DB
 
-This approach has several advantages:
- * Kafka is used as a highly-reliable and scalable distributed message platform
- * It decouples data collection and data processing from one another
- * It can prevent data loss by retaining the data in Kafka
 
-Kafka can be configured with one partition per metric name, so that consumers can aggregate data by metric names.
-To scale this, we can further partition by tags/labels and categorize/prioritize metrics to be collected first.
+该方案具有以下优势：
+* Kafka 作为一个高可靠性、可扩展的分布式消息平台，能够保证数据传输的稳定性。
+* 它将数据收集与数据处理解耦，提高了系统的灵活性。
+* 通过在 Kafka 中保留数据，可以防止数据丢失。
+
+
+Kafka可以指标名称进行分区（partition），使消费者能够基于指标名称聚合数据。
+为了进一步扩展，我们可以根据标签（tags）或标签（labels）对数据进行分区，并对指标进行分类和优先级排序，以确保关键指标优先采集。
+
 ![metrics-collection-kafka](../images/v2/chapter05/metrics-collection-kafka.png)
 
-The main downside of using Kafka for this problem is the maintenance/operation overhead.
-An alternative is to use a large-scale ingestion system like [Gorilla](https://www.vldb.org/pvldb/vol8/p1816-teller.pdf).
-It can be argued that using that would be as scalable as using Kafka for queuing.
+在使用kafka的方案中，主要的缺点就是Kafka 的运维和管理成本较高。
 
-## Where aggregations can happen
-Metrics can be aggregated at several places. There are trade-offs between different choices:
- * Collection agent - client-side collection agent only supports simple aggregation logic. Eg collect a counter for 1m and send it to the metrics collector.
- * Ingestion pipeline - To aggregate data before writing to the DB, we need a stream processing engine like Flink. This reduces write volume, but we lose data precision as we don't store raw data.
- * Query side - We can aggregate data when we run queries via our visualization system. There is no data loss, but queries can be slow due to a lot of data processing.
+一个替代方案是使用大规模数据摄取系统，如[Gorilla](https://www.vldb.org/pvldb/vol8/p1816-teller.pdf)。从扩展性的角度来看，该方案的可扩展性与基于 Kafka 的队列机制相当。
 
-## Query Service
-Having a separate query service from the time-series DB decouples the visualization and alerting system from the database, which enables us to decouple the DB from clients and change it at will.
+## 数据聚合可能发生在哪里
+指标数据可以在多个阶段进行聚合，我们需要权衡以下几点：
+ * 采集代理（Collection Agent） - 客户端采集代理仅支持简单的聚合逻辑。例如，可以收集 1 分钟内的计数器数据并将其发送到指标收集器。
+ * 数据摄取管道（Ingestion Pipeline） - 在写入数据库之前进行数据聚合，需要使用 Flink 等流式处理引擎。这种方式可以减少写入量，但由于未存储原始数据，会导致数据精度损失。
+ * 查询侧（Query Side） - 通过可视化系统在查询时对数据进行聚合。这种方式不会导致数据丢失，但由于涉及大量数据处理，查询可能会变慢。
 
-We can add a Cache layer here to reduce the load to the time-series database:
+## 查询服务
+将查询服务与时间序列数据库分离，可以将可视化和告警系统与数据库解耦，从而使我们能够将数据库与客户端解耦，并根据需要随时更换数据库。
+
+在此处可以添加缓存层，以减少时间序列数据库的负载：
 ![cache-layer-query-service](../images/v2/chapter05/cache-layer-query-service.png)
 
-We can also avoid adding a query service altogether as most visualization and alerting systems have powerful plugins to integrate with most time-series databases.
-With a well-chosen time-series DB, we might not need to introduce our own caching layer as well.
 
-Most time-series DBs don't support SQL simply because it is ineffective for querying time-series data. Here's an example SQL query for computing an exponential moving average:
+我们也可以完全避免添加查询服务，因为大多数可视化和告警系统都有强大的插件，能够与大多数时间序列数据库进行集成。
+
+如果选择了合适的时间序列数据库，我们可能也不需要引入自己的缓存层。
+
+大多数时间序列数据库不支持 SQL，主要是因为 SQL 在查询时间序列数据时效率较低。以下是一个计算指数移动平均（EMA）的 SQL 查询示例：
+
 ```
 select id,
        temp,
@@ -255,7 +264,7 @@ from (
 order by time_read;
 ```
 
-Here's the same query in Flux - query language used in InfluxDB:
+这是相同查询的 Flux 版本 —— InfluxDB 使用的查询语言：
 ```
 from(db:"telegraf")
   |> range(start:-1h)
@@ -263,28 +272,26 @@ from(db:"telegraf")
   |> exponentialMovingAverage(size:-10s)
 ```
 
-## Storage layer
-It is important to choose the time-series database carefully.
+## 存储层
+对于时间序列数据库选择，我们必须谨慎考虑。
 
-According to research published by Facebook, ~85% of queries to the operational store were for data from the past 26h.
+根据 Facebook 发布的研究，约85%的查询请求来自过去 26 小时的数据。
+如果我们选择一种能够利用这一特性的数据库，可能会对系统性能产生重大影响。InfluxDB 就是其中一个选项。
 
-If we choose a database, which harnesses this property, it could have significant impact on system performance. InfluxDB is one such option.
+无论选择哪种数据库，我们都可以采取一些优化措施。数据编码和压缩可以显著减少数据的大小。这些功能通常已经内置于优秀的时间序列数据库中。
 
-Regardless of the database we choose, there are some optimizations we might employ.
-
-Data encoding and compression can significantly reduce the size of data. Those features are usually built into a good time-series database.
 ![double-delta-encoding](../images/v2/chapter05/double-delta-encoding.png)
 
-In the above example, instead of storing full timestamps, we can store timestamp deltas.
+在上述示例中，我们可以通过存储时间戳差值（timestamp deltas）代替存储完整的时间戳。
 
-Another technique we can employ is down-sampling - converting high-resolution data to low-resolution in order to reduce disk usage.
+另一个可以采用的技术是降采样（down-sampling）——将高分辨率数据转换为低分辨率，以减少磁盘使用。
 
-We can use that for old data and make the rules configurable by data scientists, eg:
- * 7d - no down-sampling
- * 30d - down-sample to 1min
- * 1y - down-sample to 1h
+我们可以将这一方法应用于旧数据，并让数据科学家配置相关规则，例如：
+* s7天 - 不进行降采样
+* s30天 - 降采样为 1 分钟
+* s1 年 - 降采样为 1 小时
 
-For example, here's a 10-second resolution metrics table:
+例如，这里是一个精度为10秒的指标表：
 | metric | timestamp            | hostname | Metric_value |
 | ------ | -------------------- | -------- | ------------ |
 | cpu    | 2021-10-24T19:00:00Z | host-a   | 10           |
@@ -294,18 +301,19 @@ For example, here's a 10-second resolution metrics table:
 | cpu    | 2021-10-24T19:00:40Z | host-a   | 20           |
 | cpu    | 2021-10-24T19:00:50Z | host-a   | 30           |
 
-down-sampled to 30-second resolution:
+这里是一个精度为30秒的指标表：
 | metric | timestamp            | hostname | Metric_value (avg) |
 | ------ | -------------------- | -------- | ------------------ |
 | cpu    | 2021-10-24T19:00:00Z | host-a   | 19                 |
 | cpu    | 2021-10-24T19:00:30Z | host-a   | 25                 |
 
-Finally, we can also use cold storage to use old data, which is no longer used. The financial cost for cold storage is much lower.
+最后，我们还可以使用冷存储（cold storage）来存储不再使用的旧数据。冷存储的财务成本远低于热存储。
 
-## Alerting system
+## 报警系统
 ![alerting-system](../images/v2/chapter05/alerting-system.png)
 
-Configuration is loaded to cache servers. Rules are typically defined in YAML format. Here's an example:
+
+报警配置被加载到缓存服务器中。规则通常以YAML格式定义。以下是一个示例：
 ```
 - name: instance_down
   rules:
@@ -318,27 +326,29 @@ Configuration is loaded to cache servers. Rules are typically defined in YAML fo
       severity: page
 ```
 
-The alert manager fetches alert configurations from cache. Based on configuration rules, it also calls the query service at a predefined interval.
-If a rule is met, an alert event is created.
+告警管理器从缓存中获取告警配置。根据配置规则，它还会在预定的时间间隔内调用查询服务。如果满足规则，将生成告警事件。
 
-Other responsibilities of the alert manager are:
- * Filtering, merging and deduplicating alerts. Eg if an alert of a single instance is triggered multiple times, only one alert event is generated.
- * Access control - it is important to restrict alert-management operations to certain individuals only
- * Retry - the manager ensures that the alert is propagated at least once.
+告警管理器的其他职责包括：
+* 过滤、合并和去重告警 - 例如，如果一个单独实例的告警被触发多次，只会生成一个告警事件。
+* 访问控制 - 限制只有特定人员才能进行告警管理操作是非常重要的。
+* 重试机制 - 管理器确保至少将告警传播一次。
 
-The alert store is a key-value database, like Cassandra, which keeps the state of all alerts. It ensures a notification is sent at least once.
-Once an alert is triggered, it is published to Kafka.
+告警数据库是一个键值数据库，如 Cassandra，用于保存所有告警的状态。它确保至少发送一次通知。一旦告警被触发，告警会被发布到 Kafka。
 
-Finally, alert consumers pull alerts data from Kafka and send notifications over to different channels - Email, text message, PagerDuty, webhooks.
+最后，告警消费者从 Kafka 拉取告警数据，并通过不同的渠道发送通知——电子邮件、短信、PagerDuty、Webhooks等。
 
-In the real-world, there are many off-the-shelf solutions for alerting systems. It is difficult to justify building your own system in-house.
+在实际应用中，有许多现成的警报系统解决方案。自建的监控系统通常很难证明他的优势。
+## 可视化系统
+可视化系统展示了在一定时间范围内的指标和告警。以下是使用 Grafana 构建的仪表盘示例：
 
-## Visualization system
-The visualization system shows metrics and alerts over a time period. Here's an dashboard built with Grafana:
+
+
 ![grafana-dashboard](../images/v2/chapter05/grafana-dashboard.png)
 
 A high-quality visualization system is very hard to build. It is hard to justify not using an off-the-shelf solution like Grafana.
 
+构建一个高质量的可视化系统是非常困难的。很难找到理由不使用像Grafana这样的现成解决方案
+
 # Step 4 - Wrap up
-Here's our final design:
+这是最终的设计
 ![final-design](../images/v2/chapter05/final-design.png)
