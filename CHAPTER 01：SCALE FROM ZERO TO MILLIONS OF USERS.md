@@ -21,7 +21,7 @@
 接下来，让我们检查流量来源。对你的Web服务器的流量来自两个来源：Web应用程序和移动应用程序。
 
 * Web应用程序：它使用一组服务器端语言（Java、Python等）来处理业务逻辑、存储等，以及客户端语言（HTML和JavaScript）进行呈现。
-  *   移动应用程序：HTTP协议是移动应用程序和Web服务器之间的通信协议。由于其简单性，JavaScript Object Notation（JSON）是常用的API响应格式用于数据传输。以下是JSON格式的API响应示例：
+* 移动应用程序：HTTP协议是移动应用程序和Web服务器之间的通信协议。由于其简单性，JavaScript Object Notation（JSON）是常用的API响应格式用于数据传输。以下是JSON格式的API响应示例：
 
       ```
       GET /users/12 – Retrieve user object for id = 12
