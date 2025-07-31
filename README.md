@@ -44,9 +44,9 @@
 - [第1章 邻近服务](<Volume2/CHAPTER 01：Proximity Service.md>)
 - [第2章 附近的好友](<Volume2/CHAPTER 02：Nearby Friends.md>)
 - [第3章 谷歌地图](Volume2%2FCHAPTER%2003%EF%BC%9AGoogle%20Maps.md)
-- [第4章 分布式消息队列](<Volume2/CHAPTER 04: Distributed Message Queue.md>)
+- [第4章 分布式消息队列](<Volume2/CHAPTER 04：Distributed Message Queue.md>)
 - [ ] 第5章 指标监控与告警系统
-- [ ] 第6章 广告点击事件聚合
+- [第6章 广告点击事件聚合](<Volume2/CHAPTER 06：Ad Click Event Aggregation.md>)
 - [ ] 第7章 酒店预订系统
 - [ ] 第8章 分布式邮件服务
 - [ ] 第9章 类S3对象存储
