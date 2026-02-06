@@ -47,7 +47,7 @@
 - [第4章 分布式消息队列](<Volume2/CHAPTER 04：Distributed Message Queue.md>)
 - [第5章 指标监控与告警系统](Volume2%2FCHAPTER%2005%EF%BC%9AMetrics%20Monitoring%20and%20Alerting%20System.md)
 - [第6章 广告点击事件聚合](<Volume2/CHAPTER 06：Ad Click Event Aggregation.md>)
-- [ ] 第7章 酒店预订系统
+- [第7章 酒店预订系统](<Volume2/CHAPTER 07：Hotel Reservation System.md>)
 - [ ] 第8章 分布式邮件服务
 - [ ] 第9章 类S3对象存储
 - [第10章：实时游戏排行榜](<Volume2/CHAPTER 10：Real-time Gaming Leaderboard.md>)
