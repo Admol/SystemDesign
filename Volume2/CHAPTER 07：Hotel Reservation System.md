@@ -10,19 +10,19 @@
 
 酒店预订系统非常复杂，其组件因业务用例而异。在深入设计之前，你应该向面试官询问澄清问题以缩小范围。
 
-**候选人**：系统的规模有多大？  
+**候选人**：系统的规模有多大？
 **面试官**：假设我们是为一个拥有 5,000 家酒店、共 100 万间客房的连锁酒店建立网站。
 
-**候选人**：客户是在预订时支付，还是在到达酒店时支付？  
+**候选人**：客户是在预订时支付，还是在到达酒店时支付？
 **面试官**：为了简单起见，他们在预订时全额支付。
 
-**候选人**：客户仅通过酒店网站预订客房吗？我们需要支持其他预订方式（如电话预订）吗？  
+**候选人**：客户仅通过酒店网站预订客房吗？我们需要支持其他预订方式（如电话预订）吗？
 **面试官**：假设人们可以通过酒店网站或 App 预订客房。
 
-**候选人**：客户可以取消预订吗？  
+**候选人**：客户可以取消预订吗？
 **面试官**：可以。
 
-**候选人**：还有其他需要考虑的事情吗？  
+**候选人**：还有其他需要考虑的事情吗？
 **面试官**：是的，我们允许 10% 的超额预订（overbooking）。如果你不知道的话，超额预订意味着酒店出售的房间数超过了其实际拥有的房间数。酒店这样做是考虑到部分客户会取消预订。
 
 **候选人**：由于时间有限，我假设酒店搜索不在范围内。我们专注于以下功能：
@@ -35,7 +35,7 @@
 
 **面试官**：听起来不错。
 
-**面试官**：还有一件事，酒店价格是动态变化的。客房价格取决于该酒店在给定日期的预计入住率。对于本次面试，我们可以假设每天的价格可能不同。  
+**面试官**：还有一件事，酒店价格是动态变化的。客房价格取决于该酒店在给定日期的预计入住率。对于本次面试，我们可以假设每天的价格可能不同。
 **候选人**：我会记住这一点的。
 
 接下来，你可能想谈谈最重要的非功能性需求。
@@ -225,7 +225,7 @@ POST /v1/reservations
 
 设计 `room_type_inventory` 表还有其他方法，但每个日期一行可以使管理日期范围内的预订和查询变得容易。如图 6 所示，(hotel_id, room_type_id, date) 是复合主键。表中的行是通过查询未来 2 年内所有日期的库存数据预先填充的。我们有一个预定的每日作业，当日期进一步推进时，该作业会预先填充库存数据。
 
-现在我们已经完成了表结构设计，让我们对存储容量做一些估算。正如在估算部分提到的，我们有 5,000 家酒店。假设每家酒店有 20 种房型。那么就是 (5,000 家酒店 x 20 种房型 x 2 年 x 365 天) = 7,300 万行。7,300 万行数据量并不大，单个数据库足以存储这些数据。然而，单台服务器意味着单点故障。为了实现高可用性，我们可以跨多个区域或可用区设置数据库复制。
+现在我们已经完成了表结构设计，让我们对存储容量做一些估算。正如在估算部分提到的，我们有 5,000 家酒店。假设每家酒店有 20 种房型。那么就是 (5,000 家酒店 x 20 种房型 x 2 年 x 365 天) = 7,300 万行。7,300 万行数据量并不大，单个数据库足以存储这些数据。然而，单台服务器意味着单点故障。为了实现高可用性，我们可以跨多个区域或可用区设置数据库副本。
 
 表 4 显示了 “room_type_inventory” 表的样本数据。
 
@@ -544,16 +544,16 @@ Commit
 
 ## 参考资料 (Reference Material)
 
-[1] 微服务：https://en.wikipedia.org/wiki/Microservices  
-[2] 微服务架构有哪些好处？：https://www.appdynamics.com/topics/benefits-of-microservices  
-[3] gRPC: https://www.grpc.io/docs/what-is-grpc/introduction/  
-[4] 来源：Booking.com iOS app  
-[5] 串行化：https://en.wikipedia.org/wiki/Serializability  
-[6] 乐观和悲观记录锁：https://ibm.co/3Eb293O  
-[7] 乐观并发控制：https://en.wikipedia.org/wiki/Optimistic_concurrency_control  
-[8] 变更数据捕获：https://docs.oracle.com/cd/B10500_01/server.920/a96520/cdc.htm  
-[9] Debizium: https://debezium.io/  
-[10] Redis sink: https://bit.ly/3r3AEUD  
-[11] 单体架构：https://microservices.io/patterns/monolithic.html  
-[12] 二阶段提交协议：https://en.wikipedia.org/wiki/Two-phase_commit_protocol  
-[13] Saga: https://microservices.io/patterns/data/saga.html  
+[1] 微服务：https://en.wikipedia.org/wiki/Microservices
+[2] 微服务架构有哪些好处？：https://www.appdynamics.com/topics/benefits-of-microservices
+[3] gRPC: https://www.grpc.io/docs/what-is-grpc/introduction/
+[4] 来源：Booking.com iOS app
+[5] 串行化：https://en.wikipedia.org/wiki/Serializability
+[6] 乐观和悲观记录锁：https://ibm.co/3Eb293O
+[7] 乐观并发控制：https://en.wikipedia.org/wiki/Optimistic_concurrency_control
+[8] 变更数据捕获：https://docs.oracle.com/cd/B10500_01/server.920/a96520/cdc.htm
+[9] Debizium: https://debezium.io/
+[10] Redis sink: https://bit.ly/3r3AEUD
+[11] 单体架构：https://microservices.io/patterns/monolithic.html
+[12] 二阶段提交协议：https://en.wikipedia.org/wiki/Two-phase_commit_protocol
+[13] Saga: https://microservices.io/patterns/data/saga.html
